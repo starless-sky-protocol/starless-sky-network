@@ -1,0 +1,9 @@
+~*
+.phpintel
+composer.lock
+system/unfinished/
+system/vendor/
+system/storage/
+php_errors.log
+storage/**
+.env
