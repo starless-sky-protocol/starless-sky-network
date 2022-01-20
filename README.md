@@ -18,6 +18,14 @@ The idea of private keys and public keys is that one directly depends on the oth
 
 For system documentation, consult the "doc" folder inside this repository.
 
+## Roadmap
+
+- Broadcasting channels (one-to-many communication);
+- Groups (many-to-many communication);
+- Interface application;
+- Closed-generation servers;
+- Private Keys authentications;
+
 ## Credits and used third-party technologies
 
 - BLAKE3 hash algorithm by [BLAKE3-Team](https://github.com/BLAKE3-team/BLAKE3)
