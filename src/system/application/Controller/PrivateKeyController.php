@@ -9,7 +9,7 @@ class PrivateKeyController
     public function GetRandomPrivateKey()
     {
         $private_key = generante_random_private_key();
-        $public_key = private_key_to_public_key($private_key, 0);
+        $public_key = private_key_to_public_key($private_key);
 
         add_message("info", "Keypair successfully generated");
 
