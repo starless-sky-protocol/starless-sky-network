@@ -33,7 +33,7 @@ For system documentation, consult the "doc" folder inside this repository.
 - Groups (many-to-many communication);
 - Interface application;
 - Closed-generation servers;
-- Private Keys authentication for networks;
+- ~~Private Keys authentication for networks~~; 💥 _New on update 0.12.204_
 - Content integrity if network information changes;
 
 ## Donate ❤
