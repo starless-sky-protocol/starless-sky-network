@@ -1,6 +1,6 @@
 <?php
 
-function encrypt_message($message, $private_key_hash)
+function encrypt_message($message, $key)
 {
     if (strlen($_ENV["BASE_SYMETRIC_16BYTES_IV"]) != 16) {
         add_message("fatal", "BASE_SYMETRIC_16BYTES_IV must have a fixed size of 16 chars.");
@@ -9,7 +9,7 @@ function encrypt_message($message, $private_key_hash)
     $output = openssl_encrypt(
         $message,
         'AES-128-CBC',
-        $_ENV["BASE_SYMETRIC_KEY"] . $private_key_hash,
+        hmac_blake3($key, $_ENV["BASE_SYMETRIC_KEY"]),
         0,
         $_ENV["BASE_SYMETRIC_16BYTES_IV"]
     );
@@ -17,7 +17,7 @@ function encrypt_message($message, $private_key_hash)
     return $output;
 }
 
-function decrypt_message($message, $private_key_hash)
+function decrypt_message($message, $key)
 {
     if (strlen($_ENV["BASE_SYMETRIC_16BYTES_IV"]) != 16) {
         add_message("fatal", "BASE_SYMETRIC_16BYTES_IV must have a fixed size of 16 chars.");
@@ -26,7 +26,7 @@ function decrypt_message($message, $private_key_hash)
     $output = openssl_decrypt(
         $message,
         'AES-128-CBC',
-        $_ENV["BASE_SYMETRIC_KEY"] . $private_key_hash,
+        hmac_blake3($key, $_ENV["BASE_SYMETRIC_KEY"]),
         0,
         $_ENV["BASE_SYMETRIC_16BYTES_IV"]
     );

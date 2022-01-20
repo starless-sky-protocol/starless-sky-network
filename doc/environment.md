@@ -18,6 +18,10 @@ It's always important to have all environment variables declared in your environ
 
    It's the initialization vector of the symetric cryptographic functions. Must be a string with a fixed length of 16 characters.
 
+- `BASE_PRIVATE_KEY_IV` (string)
+
+   It's the initialization vector of the private keys. All private keys will be generated from this vector and they will include an encrypted manifest in their information. Every private key that will access the network must have the network manifest, otherwise it will be prevented from being used.
+
 - `SKYID_INSTANCE` (string)
 
    The instance of a SkyID is a static identifier that will become a SkyID ID. The ideal is a value between 1 to 5 digits maximum. Larger values are concatenated into your ID and have no significance in it's function. For more information, read about skyid in this documentation.
