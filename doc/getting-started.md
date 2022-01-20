@@ -19,4 +19,4 @@ After that, let's start configuring the server. Clone the environment file using
 
 With this, we will have the environment file that will define environment constants of the server that is running.
 
-To read the environment variables documentation, see the file `doc/environment.md`
+To read the environment variables documentation, see the file [`doc/environment.md`](environment.md)

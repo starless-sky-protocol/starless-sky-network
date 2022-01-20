@@ -25,6 +25,7 @@ For system documentation, consult the "doc" folder inside this repository.
 - Interface application;
 - Closed-generation servers;
 - Private Keys authentications;
+- Content integrity if network information changes;
 
 ## Credits and used third-party technologies
 
