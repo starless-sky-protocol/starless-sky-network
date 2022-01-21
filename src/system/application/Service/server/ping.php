@@ -1,12 +1,10 @@
 <?php
 
-namespace Controller;
+namespace svc\server;
 
-use RuntimeException;
-
-class ServerController
+trait ping
 {
-    public function Ping()
+    public function ping()
     {
         return json_response([
             "sls_server_version" => SLS_VERSION,

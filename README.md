@@ -17,7 +17,7 @@ The idea of private keys and public keys is that one directly depends on the oth
 ## Main Features
 
 - Decentralized networks;
-- Anonymous identities without revealing the real identity of both sender and receiver;
+- Anonymous and custom identities without revealing the real identity of both sender and receiver;
 - Based on symmetric and asymmetric encryption, no information is stored in plain text in the network storage.
 - Keys and values are never stored directly in the network storage;
 - Fast and instant content delivery network - no network authenticity required;

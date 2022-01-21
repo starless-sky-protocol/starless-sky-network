@@ -1,12 +1,10 @@
 <?php
 
-namespace Controller;
+namespace svc\identity;
 
-use Inphinit\Http\Request;
-
-class PrivateKeyController
+trait generate_random_keypair
 {
-    public function GetRandomPrivateKey()
+    public function generate_random_keypair()
     {
         $private_key = generante_random_private_key();
         $public_key = private_key_to_public_key($private_key);

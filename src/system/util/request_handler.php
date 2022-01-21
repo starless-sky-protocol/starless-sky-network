@@ -35,7 +35,7 @@ function add_message(string $type, string $message)
     }
 }
 
-function json_response(?array $content = null, bool $close_connection = false): string
+function json_response($content = null, bool $close_connection = false): string
 {
     Response::type('application/json');
 
