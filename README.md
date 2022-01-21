@@ -22,6 +22,7 @@ The idea of private keys and public keys is that one directly depends on the oth
 - Keys and values are never stored directly in the network storage;
 - Fast and instant content delivery network - no network authenticity required;
 - Easy implementation and use.
+- It is naturally impossible to spoof information.
 
 ## Documentation
 

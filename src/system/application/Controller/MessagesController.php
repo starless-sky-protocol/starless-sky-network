@@ -24,9 +24,7 @@ class MessagesController
         }
 
         $sender_public_key = null;
-        if (isset($GLOBALS["request"]->private_key)) {
-            $private_key = $GLOBALS["request"]->private_key;
-
+        if (null !== ($private_key = $GLOBALS["request"]->private_key) & $private_key != "") {
             if (!is_private_key_valid($private_key)) {
                 add_message("error", "Invalid private key.");
                 return json_response();
@@ -49,20 +47,6 @@ class MessagesController
             }
         }
 
-        if (json_decode($_ENV["COLLECT_SENDER_NET_INFORMATION"])) {
-            $sender = [
-                "ip_address" => $_SERVER['REMOTE_ADDR'],
-                "useragent" => safe_get_useragent(),
-                "public_key" => $sender_public_key
-            ];
-        } else {
-            $sender = [
-                "ip_address" => "<hidden>",
-                "useragent" => "<hidden>",
-                "public_key" => $sender_public_key
-            ];
-        }
-
         $now = time();
         $id = gen_skyid();
         $message_x = [
@@ -75,7 +59,10 @@ class MessagesController
                 "is_modified" => false,
                 "message_blake3_digest" => blake3($message->content . $message->subject)
             ],
-            "sender" => $sender
+            "pair" => [
+                "sender_public_key" => $sender_public_key,
+                "receiver_public_key" => $public_key
+            ]
         ];
 
         $message_json_data = encrypt_message(json_encode($message_x), $public_key_h);
@@ -90,6 +77,10 @@ class MessagesController
         add_message("info", "Message inserted at public key");
         return json_response(
             [
+                "pair" => [
+                    "sender_public_key" => $sender_public_key,
+                    "receiver_public_key" => $public_key
+                ],
                 "message_length" => strlen($message_json_data),
                 "id" => $id,
                 "message_blake3_digest" => blake3($message->content . $message->subject)
@@ -110,7 +101,7 @@ class MessagesController
 
         if (!is_dir($private_key_d = MESSAGES_PATH . $public_key_h)) {
             add_message("warn", "This private key doesn't has any messages");
-            return json_response([]);
+            return json_response();
         }
 
         $pagination_data = $GLOBALS["request"]->pagination_data;
@@ -180,7 +171,7 @@ class MessagesController
         $data[] = [
             "id" => $message_decrypted->id,
             "manifest" => $message_decrypted->manifest,
-            "sender" => $message_decrypted->sender,
+            "pair" => $message_decrypted->pair,
             "sent_to" => $public_key,
             "size" => strlen($message_content),
             "message" => [
@@ -223,7 +214,7 @@ class MessagesController
         $message_content = file_get_contents($file_path);
         $message_decrypted = json_decode(decrypt_message($message_content, $public_key_h));
 
-        if(!secure_strcmp($message_decrypted->sender->public_key, private_key_to_public_key($private_key))) {
+        if(!secure_strcmp($message_decrypted->pair->sender_public_key, private_key_to_public_key($private_key))) {
             add_message("error", "The private key does not match with the sender's private key of the message.");
             return json_response();
         }
@@ -231,8 +222,7 @@ class MessagesController
         $data[] = [
             "id" => $message_decrypted->id,
             "manifest" => $message_decrypted->manifest,
-            "sender" => $message_decrypted->sender,
-            "sent_to" => $public_key,
+            "pair" => $message_decrypted->pair,
             "size" => strlen($message_content),
             "message" => [
                 "subject" => $message_decrypted->subject,
@@ -280,23 +270,9 @@ class MessagesController
         $message_content = file_get_contents($file_path);
         $message_decrypted = json_decode(decrypt_message($message_content, $public_key_h));
 
-        if(secure_strcmp($message_decrypted->sender->public_key, private_key_to_public_key($private_key))) {
+        if(secure_strcmp($message_decrypted->pair->sender_public_key, $sender_public_key = private_key_to_public_key($private_key))) {
             add_message("error", "The private key does not match with the sender's private key of the message.");
             return json_response();
-        }
-
-        if (json_decode($_ENV["COLLECT_SENDER_NET_INFORMATION"])) {
-            $sender = [
-                "ip_address" => $_SERVER['REMOTE_ADDR'],
-                "useragent" => safe_get_useragent(),
-                "public_key" => $message_decrypted->sender->public_key
-            ];
-        } else {
-            $sender = [
-                "ip_address" => "<hidden>",
-                "useragent" => "<hidden>",
-                "public_key" => $message_decrypted->sender->public_key
-            ];
         }
 
         $now = time();
@@ -310,7 +286,10 @@ class MessagesController
                 "is_modified" => true,
                 "message_blake3_digest" => blake3($message->content . $message->subject)
             ],
-            "sender" => $sender
+            "pair" => [
+                "sender_public_key" => $sender_public_key,
+                "receiver_public_key" => $public_key
+            ]
         ];
 
         $message_json_data = encrypt_message(json_encode($message_x), $public_key_h);
@@ -320,6 +299,10 @@ class MessagesController
         add_message("info", "Message edited using sender's private key");
         return json_response(
             [
+                "pair" => [
+                    "sender_public_key" => $message_decrypted->sender->public_key,
+                    "receiver_public_key" => $public_key
+                ],
                 "message_length" => strlen($message_json_data),
                 "id" => $id,
                 "message_blake3_digest" => blake3($message->content . $message->subject)
@@ -347,8 +330,8 @@ class MessagesController
             add_message("warn", "This private key doesn't has any messages");
             return json_response();
         }
-
-        if (!is_file($file_path = $public_key_d . "/" . $id)) {
+        
+        if (!is_file($file_path = $public_key_d . "/" . SLS_HASH_PREFIX . algo_gen_base34_hash($id))) {
             add_message("error", "Message not found");
             return json_response();
         }
@@ -388,7 +371,7 @@ class MessagesController
             return json_response();
         }
 
-        if (!is_file($file_path = $public_key_d . "/" . $id)) {
+        if (!is_file($file_path = $public_key_d . "/" . SLS_HASH_PREFIX . algo_gen_base34_hash($id))) {
             add_message("error", "Message not found");
             return json_response();
         }
@@ -396,12 +379,12 @@ class MessagesController
         $message_content = file_get_contents($file_path);
         $message_decrypted = json_decode(decrypt_message($message_content, $public_key_h));
 
-        if(!secure_strcmp($message_decrypted->sender->public_key, private_key_to_public_key($private_key))) {
+        if(!secure_strcmp($message_decrypted->pair->sender_public_key, private_key_to_public_key($private_key))) {
             add_message("error", "The private key does not match with the sender's private key of the message.");
             return json_response();
         }
 
-        if(unlink($public_key_d . "/" . $id)) {
+        if(unlink($file_path)) {
             add_message("info", "Message deleted");
         } else {
             add_message("error", "Message cannot be deleted");

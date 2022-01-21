@@ -28,10 +28,6 @@ It's always important to have all environment variables declared in your environ
 
 ## Network Information
 
-- `COLLECT_SENDER_NET_INFORMATION` (boolean)
-
-   Defines whether the server will collect network information from the message sender, such as IP address and user-agent. Anonymous servers should avoid this option.
-
 - `ALLOW_NOT_IDENTIFIED_SENDERS` (boolean)
 
    Defines whether the server will allow sending a message to a public key without specifying a private key. In this case, you can send a message to a public key without identifying its address.
