@@ -6,35 +6,8 @@ https://github.com/BLAKE3-team/BLAKE3-specs/blob/master/blake3.pdf
 
 https://github.com/BLAKE3-team/BLAKE3
 
-It supports HASH, KEYED and DERIVE modes with XOF output
-
-There is a python version https://github.com/oconnor663/bao
-
-which is 2.5x slower than this implementation in generating the hash
-
-This implementation have been checked with the test vectors provided
-
-https://raw.githubusercontent.com/BLAKE3-team/BLAKE3/master/test_vectors/test_vectors.json
-
-By default, XOF output are 32 bytes
-
-Examples of use:
-
-HASH MODE
-		$b2 = new BLAKE3();		
-		$hash = $b2->hash($h,$xof_length);
-
-KEYED HASH		
-						
-		$b2 = new BLAKE3($key);		
-		$keyed_hash = $b2->hash($h,$xof_length);
-
-DERIVE KEY
-		$b2 = new BLAKE3();		
-		$derive_key = $b2->derivekey($context_key,$context,$xof_length);
-		
-
-@denobisipsis 2021	   
+@denobisipsis 2021
+@project-principium/starless-sky-network 2022
 */
 
 DEFINE("BLAKE3_XOF_LENGTH", 32);
@@ -102,12 +75,12 @@ class BLAKE3
             $context .= str_repeat("\0", self::BLOCK_SIZE - $size);
 
         $context_words = array_values(unpack(self::PACKING, $context));
-        self::chacha($context_words, 0, $size, 43);
+        $this->chacha($context_words, 0, $size, 43);
 
         $this->cv = array_slice($this->state, 0, 8);
         $this->kflag      = self::DERIVE_KEY_MATERIAL;
 
-        $derive_key       = self::hash($context_key, $xof_length);
+        $derive_key       = $this->hash($context_key, $xof_length);
         $derive_key_words = array_values(unpack(self::PACKING, $derive_key));
 
         $this->cv       = $derive_key_words;
@@ -319,7 +292,7 @@ class BLAKE3
 
     function nodetree($tree)
     {
-        self::setflags(4);
+        $this->setflags(4);
 
         while (sizeof($tree) > 1) {
             $chaining = "";
@@ -330,7 +303,7 @@ class BLAKE3
                     $this->state     = $this->cv;
                     $chunk_words     = array_values(unpack("V*", $pair));
 
-                    self::chacha($chunk_words, 0, 64, $this->flag);
+                    $this->chacha($chunk_words, 0, 64, $this->flag);
 
                     $chaining .= pack("V*", ...array_slice($this->state, 0, 8));
                 }
@@ -353,10 +326,11 @@ class BLAKE3
             $this->state = $this->cv;
 
             $chunk_words = array_chunk(array_values(unpack("V*", $chunks[$j])), 16);
-            self::chacha($chunk_words[0], $j, $BLOCK_SIZE, $this->kflag + 1, true, !$is_root);
-            for ($k = 1; $k < sizeof($chunk_words) - 1; $k++)
-                self::chacha($chunk_words[$k], $j, $BLOCK_SIZE, $this->kflag, true, !$is_root);
-            self::chacha($chunk_words[$k], $j, $size, $this->kflag + 2, true, !$is_root);
+            $this->chacha($chunk_words[0], $j, $BLOCK_SIZE, $this->kflag + 1, true, !$is_root);
+            for ($k = 1; $k < sizeof($chunk_words) - 1; $k++) {
+                $this->chacha($chunk_words[$k], $j, $BLOCK_SIZE, $this->kflag, true, !$is_root);
+            }
+            $this->chacha($chunk_words[$k], $j, $size, $this->kflag + 2, true, !$is_root);
 
             $hashes .= pack("V*", ...array_slice($this->state, 0, 8));
         }
@@ -376,15 +350,15 @@ class BLAKE3
 
             $chunk_words = array_chunk(array_values(unpack("V*", $chunks[$j])), 16);
 
-            self::chacha($chunk_words[0], $j, $BLOCK_SIZE, $this->kflag + 1, true, !$is_root);
+            $this->chacha($chunk_words[0], $j, $BLOCK_SIZE, $this->kflag + 1, true, !$is_root);
 
             for ($k = 1; $k < sizeof($chunk_words) - 1; $k++)
-                self::chacha($chunk_words[$k], $j, $BLOCK_SIZE, $this->kflag, true, !$is_root);
+                $this->chacha($chunk_words[$k], $j, $BLOCK_SIZE, $this->kflag, true, !$is_root);
 
             if ($is_root) {
-                self::setflags(10);
+                $this->setflags(10);
                 $j = 0;
-            } else     self::setflags(2);
+            } else $this->setflags(2);
 
             $chunk_words = $chunk_words[$k];
         } else {
@@ -398,7 +372,7 @@ class BLAKE3
                 $j      = 0;
             }
 
-            self::setflags($flag);
+            $this->setflags($flag);
         }
 
         // for XOF output
@@ -406,7 +380,7 @@ class BLAKE3
         $this->last_cv         = $this->cv;
         $this->last_state    = $this->state;
 
-        self::chacha($chunk_words, $j, $size, $this->flag, true, !$is_root);
+        $this->chacha($chunk_words, $j, $size, $this->flag, true, !$is_root);
 
         $hashes .= pack("V*", ...array_slice($this->state, 0, 8));
 
@@ -430,7 +404,7 @@ class BLAKE3
         for ($k = 1; $k < $cycles; $k++) {
             $this->cv     = $this->last_cv;
             $this->state    = $this->last_state;
-            self::chacha($this->last_chunk, $k, $this->last_size, $this->flag, true);
+            $this->chacha($this->last_chunk, $k, $this->last_size, $this->flag, true);
             $XofHash       .= pack(self::PACKING, ...$this->state);
         }
 
@@ -450,7 +424,7 @@ class BLAKE3
             $is_root = true;
         else    $is_root = false;
 
-        $tree = str_split(self::nodebytes($block, $is_root), self::BLOCK_SIZE);
+        $tree = str_split($this->nodebytes($block, $is_root), self::BLOCK_SIZE);
         /*
 		This is the reverse tree. It makes a reduction from left to right in pairs
 		
@@ -461,7 +435,7 @@ class BLAKE3
 		till there is a parent		
 		*/
         if (sizeof($tree) > 1)
-            $tree = self::nodetree($tree);
+            $tree = $this->nodetree($tree);
 
         if (strlen($tree[0]) > 32) {
             $this->state     = $this->cv;
@@ -474,17 +448,16 @@ class BLAKE3
             $this->last_size     = 64;
 
             $flag    = self::CHUNK_START | self::CHUNK_END | self::ROOT;
-            self::setflags(++$flag);
+            $this->setflags(++$flag);
 
-            self::chacha($chunk_words, 0, 64, $this->flag, 1);
+            $this->chacha($chunk_words, 0, 64, $this->flag, 1);
 
             $this->last_v = $this->state;
 
             $hash = pack("V*", ...array_slice($this->state, 0, 8));
-            
         } else     $hash = $tree[0];
 
-        return self::XOF_output($hash, $XOF_digest_length);
+        return $this->XOF_output($hash, $XOF_digest_length);
     }
 }
 
