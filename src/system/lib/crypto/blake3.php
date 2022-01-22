@@ -93,7 +93,7 @@ class BLAKE3
         } else    $this->cv      = self::IV;
     }
 
-    function derivekey($context_key = "", $context = "", $xof_length)
+    function derivekey($context_key = "", $context = "", $xof_length = 32)
     {
         $this->state     = self::IV;
 
