@@ -50,7 +50,7 @@ function json_response($content = null, bool $close_connection = false)
         'messages' => array_reverse($GLOBALS["messages"]),
         'response' => $content
     ]);
-
+    
     if (!$close_connection) {
         return $json_response;
     } else {

@@ -8,7 +8,7 @@ trait read_from_sender
     {
         $private_key = $GLOBALS["request"]->private_key;
         $public_key = $GLOBALS["request"]->public_key;
-        $public_key_h = SLS_HASH_PREFIX . algo_gen_base34_hash($public_key);
+        $public_key_h = algo_gen_base34_hash($public_key);
 
         if (!is_private_key_valid($private_key)) {
             add_message("error", "Invalid private key.");
@@ -25,7 +25,7 @@ trait read_from_sender
             return json_response();
         }
 
-        if (!is_file($file_path = $public_key_d . "/" . SLS_HASH_PREFIX . algo_gen_base34_hash($id))) {
+        if (!is_file($file_path = $public_key_d . "/" . algo_gen_base34_hash($id))) {
             add_message("error", "Message not found");
             return json_response();
         }

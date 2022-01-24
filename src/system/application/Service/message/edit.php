@@ -14,7 +14,7 @@ trait edit
         $message = $GLOBALS["request"]->message;
         $public_key = $GLOBALS["request"]->public_key;
         $private_key = $GLOBALS["request"]->private_key;
-        $public_key_h = SLS_HASH_PREFIX . algo_gen_base34_hash($public_key);
+        $public_key_h = algo_gen_base34_hash($public_key);
 
         if (!is_public_key_valid($public_key)) {
             add_message("error", "Invalid public key.");
@@ -31,7 +31,7 @@ trait edit
             return json_response();
         }
 
-        if (!is_file($file_path = $public_key_d . "/" . SLS_HASH_PREFIX . algo_gen_base34_hash($id))) {
+        if (!is_file($file_path = $public_key_d . "/" . algo_gen_base34_hash($id))) {
             add_message("error", "Message not found");
             return json_response();
         }
@@ -63,7 +63,7 @@ trait edit
 
         $message_json_data = encrypt_message(json_encode($message_x), $public_key_h);
 
-        file_put_contents($public_key_d . "/" . SLS_HASH_PREFIX . algo_gen_base34_hash($id), $message_json_data);
+        file_put_contents($public_key_d . "/" . algo_gen_base34_hash($id), $message_json_data);
 
         add_message("info", "Message edited using sender's private key");
         return json_response(

@@ -14,7 +14,7 @@ trait add
             return json_response();
         }
 
-        $public_key_h = SLS_HASH_PREFIX . algo_gen_base34_hash($public_key);
+        $public_key_h = algo_gen_base34_hash($public_key);
 
         if (!is_dir($public_key_d = MESSAGES_PATH . $public_key_h)) {
             mkdir($public_key_d, 775);
@@ -69,7 +69,7 @@ trait add
             return json_response();
         }
 
-        file_put_contents($public_key_d . "/" . SLS_HASH_PREFIX . algo_gen_base34_hash($id), $message_json_data);
+        file_put_contents($public_key_d . "/" . algo_gen_base34_hash($id), $message_json_data);
 
         add_message("info", "Message inserted at public key");
         return json_response(

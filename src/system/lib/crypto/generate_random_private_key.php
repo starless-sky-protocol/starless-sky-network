@@ -11,9 +11,9 @@ function generante_random_private_key()
         die();
     }
 
-    $length = PRIVATE_KEY_GEN_LENGTH - get_algo_length("");
+    $length = PRIVATE_KEY_GEN_LENGTH - get_algo_length() - 2;
     $r = openssl_random_pseudo_bytes($length, $force);
     $m = algo_gen_base34_hash($iv) . $r;
     $d = encrypt_message($m, "");
-    return SLS_PRIVATE_KEY_PREFIX . $d;
+    return $d;
 }

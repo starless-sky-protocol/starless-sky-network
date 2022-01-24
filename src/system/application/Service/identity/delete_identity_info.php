@@ -8,7 +8,7 @@ trait delete_identity_info
     {
         $private_key = $GLOBALS["request"]->private_key;
         $public_key = private_key_to_public_key($private_key);
-        $public_key_h = SLS_HASH_PREFIX . algo_gen_base34_hash($public_key);
+        $public_key_h = algo_gen_base34_hash($public_key);
 
         if (!is_private_key_valid($private_key)) {
             add_message("error", "Invalid private key.");

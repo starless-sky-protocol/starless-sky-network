@@ -1,6 +1,6 @@
 <?php
 
-function get_algo_length($prefix)
+function get_algo_length()
 {
-    return strlen($prefix) + BLAKE3_XOF_LENGTH * 2;
+    return BLAKE3_XOF_LENGTH * 2;
 }

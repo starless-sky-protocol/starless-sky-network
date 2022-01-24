@@ -7,7 +7,7 @@ trait get_identity_info
     public function get_identity_info()
     {
         $public_key = $GLOBALS["request"]->public_key;
-        $public_key_h = SLS_HASH_PREFIX . algo_gen_base34_hash($public_key);
+        $public_key_h = algo_gen_base34_hash($public_key);
 
         if (!is_public_key_valid($public_key)) {
             add_message("error", "Invalid public key.");
