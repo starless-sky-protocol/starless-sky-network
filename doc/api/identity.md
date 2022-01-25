@@ -34,9 +34,9 @@ Use this route to define public information about who you are on the network usi
 
 > The content must be smaller than `MESSAGE_MAX_SIZE`.
 
-```json
-POST /identity
+    POST /identity
 
+```json
 {
 	"private_key": "<your-private-key>",
 	"public": {
@@ -55,9 +55,9 @@ where:
 
 Use this route to get information about a public key present on the network. Note that not all public keys will return information, even if they have messages circulating on the network. Identity on the server is completely optional.
 
-```json
-GET /identity
+    GET /identity
 
+```json
 {
 	"public_key": "..."
 }
@@ -72,9 +72,9 @@ Use this route to delete your public identity information on the server.
 
 > Note: this route does not delete messages.
 
-```json
-DELETE /identity
+    DELETE /identity
 
+```json
 {
 	"private_key": "<your-private-key>"
 }

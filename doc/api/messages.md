@@ -15,9 +15,9 @@ Summary:
 
 To send a message to a public key on the network, use the following endpoint:
 
-```json
-POST /messages
+    POST /messages
 
+```json
 {
     "public_key": "<destinatary_public_key>",
     "private_key": "<sender_private_key>",
@@ -41,9 +41,9 @@ This method is used to get the inbox messages through the receptor's private key
 
 > Note: each message on the response trims out the first 30 characters of each message as a preview only. To read each complete message, consider calling a complete message read endpoint.
 
-```json
-GET /messages
+    GET /messages
 
+```json
 {
     "private_key": "<receiver_private_key>",
     "pagination_data": {
@@ -62,9 +62,9 @@ where:
 
 This method is used for the message receiver content to read the message received by the sender.
 
-```json
-GET /messages/receiver/<id>
+    GET /messages/receiver/<id>
 
+```json
 {
     "private_key": "<receiver_private_key>"
 }
@@ -78,9 +78,9 @@ where:
 
 This method is used by the sender of the message itself to read the message after it has been sent.
 
-```json
-GET /messages/sender/<id>
+    GET /messages/sender/<id>
 
+```json
 {
     "private_key": "<sender_private_key>",
     "public_key": "<receiver_public_key>"
@@ -94,13 +94,13 @@ where:
 
 ## Edit message after sending it
 
-Use this route to edit the message after it has been sent to the receiver. It can only be used by the sender of the message and only if `ALLOW_MESSAGE_EDIT` is enabled on the network.
+Use this route to edit the message after it has been sent to the receiver. It can only be used by the sender of the message and only if `information.allow_message_edit` is enabled on the network.
 
 > Note: using this route the `manifest.is_modified` attribute of the message manifest will be changed to `true` and a new digest hash will be generated for the new message. Also, if the server collects network information, it will be updated on the message manifest too. The message SkyID remains preserved.
 
-```json
-PUT /messages/<id>
+    PUT /messages/<id>
 
+```json
 {
     "private_key": "<sender_private_key>",
     "public_key": "<receiver_public_key>"
@@ -118,11 +118,11 @@ where:
 
 Use this method for the receiver permanently delete an incoming message in their public key.
 
-> Note: this method only works if `ALLOW_MESSAGE_DELETION` is enabled on the server.
+> Note: this method only works if `information.allow_message_deletion` is enabled on the server.
+
+    DELETE /messages/receiver/<id>
 
 ```json
-DELETE /messages/receiver/<id>
-
 {
     "private_key": "<receiver_private_key>"
 }
@@ -136,11 +136,11 @@ where:
 
 Use this method for the sender to delete the message sent to a public key.
 
-> Note: this method only works if `ALLOW_MESSAGE_DELETION` is enabled on the server.
+> Note: this method only works if `allow_message_deletion` is enabled on the server.
+
+    DELETE /messages/sender/<id>
 
 ```json
-DELETE /messages/sender/<id>
-
 {
     "private_key": "<sender_private_key>",
     "public_key": "<receiver_public_key>"

@@ -10,9 +10,6 @@ if (INPHINIT_COMPOSER) {
     UtilsAutoload();
 }
 
-$dotenv = \Dotenv\Dotenv::createImmutable(INPHINIT_ROOT);
-$dotenv->load();
-
 UtilsConfig();
 
 if (App::env('development')) {

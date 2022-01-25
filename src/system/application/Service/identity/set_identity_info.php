@@ -27,7 +27,7 @@ trait set_identity_info
 
         $rawData = json_encode($identity_data);
 
-        if (strlen($rawData) >= $max_size = json_decode($_ENV["MESSAGE_MAX_SIZE"])) {
+        if (strlen($rawData) >= $max_size = config("information.message_max_size")) {
             add_message("error", "Information content cannot be bigger than $max_size bytes.");
             return json_response();
         }

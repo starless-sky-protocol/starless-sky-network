@@ -1,5 +1,18 @@
 # Changelog
 
+## Version **0.13** Build **335**
+
+Development branch: Alpha Release
+
+- Environment file is now configuration file. More details in the documentation `configuration.md`.
+- Symmetric Encrypting functions now generate a 16-byte fixed random IV.
+- Optimized the generation of hashes by reducing its base from 34 to 16. Private-keys remains at Base 64.
+- The hashes and address prefixes will always be "0x".
+- Message sizes and other variables can now be written in non-bytes notation in `.env`.
+- Updated example environment file `.env.example`.
+- Fixed a bug where the Blake3 lib script was not compatible with PHP 8 and above.
+- Fixed a bug where the system did not check the message size in the edit route.
+
 ## Version **0.12** Build **231**
 
 Development branch: Alpha Release

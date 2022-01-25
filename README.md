@@ -1,10 +1,12 @@
 ![aa](https://i.imgur.com/69IIaFR.png)
 
-<p align=center>Descentralized network protocol for sending and receiving secure messages over an secure layer.</p>
+<p align=center>Descentralized network protocol providing smart identity over an secure layer.</p>
 
 ## What is the Starless Sky Protocol?
 
-The Starless Sky Protocol is a one-to-many messaging connection protocol written in PHP that maintains data integrity and has unique and advanced encryption features. Its construction consists of RESTful APIs that do not depend of a database to function. The relationship of information is made by hashes calculations and asymmetric cryptography, where the holder of the private key has a public key that is used to receive the messages.
+Starless Sky is a network protocol for secure identities, providing the use of assymetric identities, public information, end-to-end messaging and smart contracts. The system consists of an identity holder having two keys, the private and the public, where through the private one he controls who he is on the network and the public one he allows to be exposed to receive messages, contracts or provide information about who he is.
+
+It also has an one-to-many messaging connection protocol written that maintains data integrity and has unique and advanced encryption features. Its construction consists of RESTful APIs that do not depend of a database to function. The relationship of information is made by hashes calculations and asymmetric cryptography, where the holder of the private key has a public key that is used to receive the messages.
 
 The algorithm is customizable by an environment file and centralized on servers known as "networks". Users can create their own networks or use existing networks. Each network may contain its own algorithm for handling information. It is interesting to note that the existence of malicious networks can exist.
 
@@ -12,21 +14,30 @@ The algorithm is customizable by an environment file and centralized on servers 
 
 The idea of private keys and public keys is that one directly depends on the other. A public key is irreversible and cannot have the private key decrypted, but it is possible to calculate the public key from a private key. This indicates that a private key is the master access for that sender/receiver.
 
+With a private key it is possible to calculate your public key, but with a public key it is impossible to calculate your private key.
+
 > The project is still under development and its algorithm is also being developed. Some security issues may change in the future, along with how it works.
 
 ## Main Features
 
+- Smart contracts and signing modules; 
 - Decentralized networks;
-- Anonymous and custom identities without revealing the real identity of both sender and receiver;
+- Anonymous and custom identities without revealing the real identity of the keypair holder;
 - Based on symmetric and asymmetric encryption, no information is stored in plain text in the network storage.
 - Keys and values are never stored directly in the network storage;
 - Fast and instant content delivery network - no network authenticity required;
 - Easy implementation and use.
 - It is naturally impossible to spoof information.
 
+## Security Considerations
+
+There is no perfect system, but there are procedures that make a network secure enough to don't have problems in the future. This system uses the latest encryption technologies and tends to be secure.
+
+Read `doc/considerations.md` to understand the best security practices for a network that can store identities.
+
 ## Documentation
 
-For system documentation, consult the "doc" folder inside this repository.
+For system documentation, consult the `doc` folder inside this repository. You should start learning from `getting-started.md`.
 
 ## Roadmap
 
@@ -36,6 +47,7 @@ For system documentation, consult the "doc" folder inside this repository.
 - Closed-generation servers;
 - ~~Private Keys authentication for networks~~; 💥 _New on update 0.12.204_
 - Content integrity if network information changes;
+- Store data with Blockchain;
 
 ## Donate ❤
 

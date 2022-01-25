@@ -4,21 +4,17 @@ define("IV_LENGTH", 16);
 
 function get_random_iv() {
     $b2 = new BLAKE3();
-    return base64_encode($b2->hash($_ENV["BASE_SYMETRIC_16BYTES_IV"] . time() . rand(), IV_LENGTH - 4));
+    return base64_encode($b2->hash(config("crypto.base_symetric_iv_seed") . time() . rand(), IV_LENGTH - 4));
 }
 
 function encrypt_message($message, $key)
 {
-    if (strlen($_ENV["BASE_SYMETRIC_16BYTES_IV"]) != IV_LENGTH) {
-        add_message("fatal", "BASE_SYMETRIC_16BYTES_IV must have a fixed size of 16 chars.");
-    }
-
     $iv = get_random_iv();
 
     $output = openssl_encrypt(
         $message,
         'AES-128-CBC',
-        hmac_blake3($key, $_ENV["BASE_SYMETRIC_KEY"]),
+        hmac_blake3($key, config("crypto.base_symetric_key")),
         0,
         $iv
     );
@@ -39,7 +35,7 @@ function decrypt_message($message, $key)
     $output = openssl_decrypt(
         $data,
         'AES-128-CBC',
-        hmac_blake3($key, $_ENV["BASE_SYMETRIC_KEY"]),
+        hmac_blake3($key, config("crypto.base_symetric_key")),
         0,
         $iv
     );

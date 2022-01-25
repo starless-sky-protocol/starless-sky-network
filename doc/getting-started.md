@@ -13,10 +13,11 @@ After cloning the repository to the root directory of your server's domain, inst
 
     composer install
 
-After that, let's start configuring the server. Clone the environment file using:
+After that, let's start configuring the server. Clone the configuration file using:
 
-    cp .env.example .env
+    cd ./src/system/application/Config
+    cp config.php.example config.php
 
-With this, we will have the environment file that will define environment constants of the server that is running.
+With this, we will have the configuration file that will define configuration constants of the server that is running.
 
-To read the environment variables documentation, see the file [`doc/environment.md`](environment.md)
+To read the configuration file documentation, see the file [`doc/environment.md`](environment.md)

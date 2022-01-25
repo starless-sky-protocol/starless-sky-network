@@ -1,19 +1,20 @@
 <?php
 
+DEFINE("PRIVATE_KEY_GEN_LENGTH", 256);
+
 function generante_random_private_key()
 {
-    $iv = $_ENV["BASE_PRIVATE_KEY_IV"];
-    $iv_len = strlen($iv);
-
-    if ($iv_len == 0) {
-        add_message("fatal", "Cannot generate private key: network private key IV is empty");
+    $server_id = config("crypto.private_key_server_id");
+    $id_len = strlen($server_id);
+    if ($id_len == 0) {
+        add_message("fatal", "Cannot generate private key: network private key ID is empty");
         json_response([], true);
         die();
     }
 
     $length = PRIVATE_KEY_GEN_LENGTH - get_algo_length() - 2;
     $r = openssl_random_pseudo_bytes($length, $force);
-    $m = algo_gen_base34_hash($iv) . $r;
+    $m = algo_gen_base34_hash($server_id) . $r;
     $d = encrypt_message($m, "");
     return $d;
 }

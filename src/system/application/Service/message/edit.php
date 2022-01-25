@@ -6,7 +6,7 @@ trait edit
 {
     public function edit($id)
     {
-        if (json_decode($_ENV["ALLOW_MESSAGE_EDIT"]) == false) {
+        if (config("information.allow_message_edit") == false) {
             add_message("error", "This SLS network doens't allow editing of messages.");
             return json_response();
         }
@@ -62,6 +62,11 @@ trait edit
         ];
 
         $message_json_data = encrypt_message(json_encode($message_x), $public_key_h);
+
+        if (strlen($message_json_data) >= parse_hsize($size = config("information.message_max_size"))) {
+            add_message("error", "Message content cannot be bigger than " . $size . " bytes.");
+            return json_response();
+        }
 
         file_put_contents($public_key_d . "/" . algo_gen_base34_hash($id), $message_json_data);
 

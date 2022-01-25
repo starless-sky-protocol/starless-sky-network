@@ -3,7 +3,7 @@
 set_error_handler(function($errno, $errstr, $errfile, $errline ) {
     http_response_code(500);
 
-    $debug = json_decode($_ENV["DEBUG_ENABLED"]);
+    $debug = config("development");
 
     if(!$debug && strpos($errstr, $undefined_property_text = "Undefined property: stdClass::$") == 0) {
         add_message("error", "Missing request parameter: " . str_replace($undefined_property_text, "", $errstr));

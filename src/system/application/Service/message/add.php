@@ -38,7 +38,7 @@ trait add
                 return json_response();
             }
         } else {
-            if (!json_decode($_ENV["ALLOW_NOT_IDENTIFIED_SENDERS"])) {
+            if (!config("information.allow_not_identified_senders")) {
                 add_message("error", "This network does not allow sending messages by users not identified with a public key.");
                 return json_response();
             }
@@ -64,8 +64,8 @@ trait add
 
         $message_json_data = encrypt_message(json_encode($message_x), $public_key_h);
 
-        if (strlen($message_json_data) >= $max_size = json_decode($_ENV["MESSAGE_MAX_SIZE"])) {
-            add_message("error", "Message content cannot be bigger than $max_size bytes.");
+        if (strlen($message_json_data) >= parse_hsize($size = config("information.message_max_size"))) {
+            add_message("error", "Message content cannot be bigger than " . $size . " bytes.");
             return json_response();
         }
 

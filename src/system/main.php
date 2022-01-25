@@ -16,3 +16,6 @@ Route::set('DELETE', '/messages/receiver/{:[a-zA-Z0-9]+:}{:/?:}', "messages_cont
 Route::set('DELETE', '/messages/sender/{:[a-zA-Z0-9]+:}{:/?:}', "messages_controller:delete_from_sender");
 Route::set('POST', '/messages{:/?:}', "messages_controller:add");
 
+Route::set('GET', '/sign{:/?:}', "sign_controller:issuer_view_contract");
+Route::set('POST', '/sign{:/?:}', "sign_controller:create_sign_request");
+Route::set('POST', '/sign/{:[a-zA-Z]+:}{:/?:}', "sign_controller:sign_request");

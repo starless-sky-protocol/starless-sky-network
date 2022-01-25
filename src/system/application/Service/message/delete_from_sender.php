@@ -6,7 +6,7 @@ trait delete_from_receiver
 {
     public function delete_from_receiver($id)
     {
-        if (json_decode($_ENV["ALLOW_MESSAGE_DELETION"]) == false) {
+        if (config("information.allow_message_deletion") == false) {
             add_message("error", "This SLS network doens't allow deletion of messages.");
             return json_response();
         }

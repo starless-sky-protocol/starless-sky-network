@@ -2,10 +2,10 @@
 return array(
     'development' => true,
     'crypto' => [
-        'base_hmac_key' => "aomaogmeao948",
-        'base_symetric_key' => "baobua94a",
-        'base_symetric_iv_seed' => "u949aq9jsa",
-        'private_key_server_id' => "12512163",
+        'base_hmac_key' => "",
+        'base_symetric_key' => "",
+        'base_symetric_iv_seed' => "",
+        'private_key_server_id' => "",
         'skyid_instance' => 1000
     ],
     'information' => [
