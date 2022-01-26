@@ -54,9 +54,9 @@ Gets information about the generated contract for one signer.
 
 ```json
 {
-	"private_key": "<issuer-private-key>",
-	"public_key": "<signer-public-key>",
-	"id": "<contract-id>"
+    "private_key": "<issuer-private-key>",
+    "public_key": "<signer-public-key>",
+    "id": "<contract-id>"
 }
 ```
 
@@ -64,3 +64,8 @@ where:
 - `private_key`: the private key of the contract issuer;
 - `public_key`: the public key of the target signer;
 - `id`: The SkyID of the issued contract.
+
+> On response, `status.sign_status` can have three values:
+> - `true`: the signer signed the contract;
+> - `false`: the signer rejected the contract;
+> - `null`: the signer hasn't decided about the contract.

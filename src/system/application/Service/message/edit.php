@@ -39,7 +39,7 @@ trait edit
         $message_content = file_get_contents($file_path);
         $message_decrypted = json_decode(decrypt_message($message_content, $public_key_h));
 
-        if (secure_strcmp($message_decrypted->pair->sender_public_key, $sender_public_key = private_key_to_public_key($private_key))) {
+        if (!secure_strcmp($message_decrypted->pair->sender_public_key, $sender_public_key = private_key_to_public_key($private_key))) {
             add_message("error", "The private key does not match with the sender's private key of the message.");
             return json_response();
         }
@@ -73,13 +73,10 @@ trait edit
         add_message("info", "Message edited using sender's private key");
         return json_response(
             [
-                "pair" => [
-                    "sender_public_key" => $message_decrypted->sender->public_key,
-                    "receiver_public_key" => $public_key
-                ],
+                "pair" => $message_decrypted->pair,
                 "message_length" => strlen($message_json_data),
                 "id" => $id,
-                "message_blake3_digest" => blake3($message->content . $message->subject)
+                "message_blake3_digest" => $message_x["manifest"]["message_blake3_digest"]
             ]
         );
     }

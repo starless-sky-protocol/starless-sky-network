@@ -26,12 +26,11 @@ trait read_from_receiver
 
         $message_content = file_get_contents($file_path);
         $message_decrypted = json_decode(decrypt_message($message_content, $public_key_h));
-        $data[] = [
+        $data = [
             "id" => $message_decrypted->id,
             "manifest" => $message_decrypted->manifest,
             "pair" => $message_decrypted->pair,
-            "sent_to" => $public_key,
-            "size" => strlen($message_content),
+            "size" => hsize(strlen($message_content)),
             "message" => [
                 "subject" => $message_decrypted->subject,
                 "content" => $message_decrypted->content,

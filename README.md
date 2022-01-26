@@ -39,6 +39,8 @@ Read `doc/considerations.md` to understand the best security practices for a net
 
 For system documentation, consult the `doc` folder inside this repository. You should start learning from `getting-started.md`.
 
+After setting up, test your network using the testing utility in this repository. Read `building-tests.md` to get started with tests.
+
 ## Roadmap
 
 - Broadcasting channels (one-to-many communication);

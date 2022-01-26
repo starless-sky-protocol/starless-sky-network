@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "StarlessSkyNetworkTester": {
+      "commandName": "Project",
+      "commandLineArgs": "http://starlessskynetworkserver.test"
+    }
+  }
+}

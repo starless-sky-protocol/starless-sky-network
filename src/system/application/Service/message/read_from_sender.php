@@ -38,11 +38,11 @@ trait read_from_sender
             return json_response();
         }
 
-        $data[] = [
+        $data = [
             "id" => $message_decrypted->id,
             "manifest" => $message_decrypted->manifest,
             "pair" => $message_decrypted->pair,
-            "size" => strlen($message_content),
+            "size" => hsize(strlen($message_content)),
             "message" => [
                 "subject" => $message_decrypted->subject,
                 "content" => $message_decrypted->content,
