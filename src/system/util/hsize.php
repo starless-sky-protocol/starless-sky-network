@@ -1,9 +1,10 @@
 <?php
 
-function parse_hsize(string $hsize): int {
+function parse_hsize(string $hsize): int
+{
     $lchar = strtoupper(substr($hsize, -1));
     $size = preg_replace('/[^0-9]/', '', $hsize);
-    switch($lchar) {
+    switch ($lchar) {
         case "B":
             return $size;
         case "K":
@@ -17,9 +18,10 @@ function parse_hsize(string $hsize): int {
     }
 }
 
-function hsize($size) {
-    if($size >= 1<<30) return floor($size/(1<<30),2)."G";
-    if($size >= 1<<20) return floor($size/(1<<20),2)."M";
-    if($size >= 1<<10) return floor($size/(1<<10),2)."K";
-    return floor($size)."B";
+function hsize($size)
+{
+    if ($size >= 1 << 30) return floor($size / (1 << 30), 2) . " Gb";
+    if ($size >= 1 << 20) return floor($size / (1 << 20), 2) . " Mb";
+    if ($size >= 1 << 10) return floor($size / (1 << 10), 2) . " Kb";
+    return floor($size) . " bytes";
 }

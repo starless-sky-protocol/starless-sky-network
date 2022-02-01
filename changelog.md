@@ -1,5 +1,21 @@
 # Changelog
 
+## Version **0.15** Build **600**
+
+Development branch: Alpha Release
+
+- Updated project `composer.json` data to match project information.
+- Introduced contracts: issuance of messages that allow the authentication of information on the network.
+- As `inphinit/framework` updated to version `0.5.16`, there was an bug fixes that prevented the system from running properly in PHP 8.1.
+- Now sending messages creates two copies of it, but maintaining its integrity and SkyID. One is stored for the sender and the other for the receiver. In this way, the sender is able to obtain a list of messages sent by him. Changing a message's data implies changing the messages in both stores.
+- Routes that needed two ends (sender/receiver) were unified. More details on how to use them in the API documentation.
+- Added `dns` option to the configuration file.
+- Bug fixes in the generation of private keys.
+
+Known bugs:
+
+- The testing tool does not work in this version. A working version is already being made.
+
 ## Version **0.13** Build **335**
 
 Development branch: Alpha Release

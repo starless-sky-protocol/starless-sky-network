@@ -14,9 +14,9 @@ trait add
             return json_response();
         }
 
-        $public_key_h = algo_gen_base34_hash($public_key);
+        $public_key_h = algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_DIRNAME);
 
-        if (!is_dir($public_key_d = MESSAGES_PATH . $public_key_h)) {
+        if (!is_dir($public_key_d = INBOX_PATH . $public_key_h)) {
             mkdir($public_key_d, 775);
         }
 
@@ -27,7 +27,7 @@ trait add
                 return json_response();
             }
 
-            $sender_public_key = private_key_to_public_key($private_key);
+            $sender_public_key = algo_gen_hash($private_key, SLOPT_PRIVATE_KEY_TO_PUBLIC_KEY);
 
             if (!is_public_key_valid($sender_public_key)) {
                 add_message("error", "Invalid sender public key.");
@@ -44,6 +44,11 @@ trait add
             }
         }
 
+        if (trim($message->content) == "" || trim($message->subject) == "") {
+            add_message("error", "Message contents cannot be empty or whitespace.");
+            return json_response();
+        }
+
         $now = time();
         $id = gen_skyid();
         $message_x = [
@@ -57,28 +62,39 @@ trait add
                 "message_blake3_digest" => blake3($message->content . $message->subject)
             ],
             "pair" => [
-                "sender_public_key" => $sender_public_key,
-                "receiver_public_key" => $public_key
+                "from" => $sender_public_key,
+                "to" => $public_key
             ]
         ];
 
-        $message_json_data = encrypt_message(json_encode($message_x), $public_key_h);
+        $message_json_data_for_receiver = encrypt_message(json_encode($message_x), algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_KEY));
 
-        if (strlen($message_json_data) >= parse_hsize($size = config("information.message_max_size"))) {
+        if (strlen($message->content . $message->subject) >= parse_hsize($size = config("information.message_max_size"))) {
             add_message("error", "Message content cannot be bigger than " . $size . " bytes.");
             return json_response();
         }
 
-        file_put_contents($public_key_d . "/" . algo_gen_base34_hash($id), $message_json_data);
+        file_put_contents($public_key_d . "/" . algo_gen_hash($id, SLOPT_SKYID_HASH), $message_json_data_for_receiver);
+
+        if ($sender_public_key != null) {
+            $sender_public_key_h = algo_gen_hash($sender_public_key, SLOPT_PUBLIC_KEY_DIRNAME);
+            if (!is_dir($public_key_d = SENT_PATH . $sender_public_key_h)) {
+                mkdir($public_key_d, 775);
+            }
+            $message_json_data_for_sender = encrypt_message(json_encode($message_x), algo_gen_hash($sender_public_key, SLOPT_PUBLIC_KEY_KEY));
+            file_put_contents(SENT_PATH . $sender_public_key_h . "/" . algo_gen_hash($id, SLOPT_SKYID_HASH), $message_json_data_for_sender);
+        } else {
+            add_message("warn", "Could not store transaction for sender as it is sending anonymously.");
+        }
 
         add_message("info", "Message inserted at public key");
         return json_response(
             [
                 "pair" => [
-                    "sender_public_key" => $sender_public_key,
-                    "receiver_public_key" => $public_key
+                    "from" => $sender_public_key,
+                    "to" => $public_key
                 ],
-                "message_length" => strlen($message_json_data),
+                "message_length" => hsize(strlen($message->content . $message->subject)),
                 "id" => $id,
                 "message_blake3_digest" => blake3($message->content . $message->subject)
             ]

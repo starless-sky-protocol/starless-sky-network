@@ -2,14 +2,15 @@
 
 namespace svc\signing;
 
-trait create_sign_request
+trait add
 {
-    function create_sign_request()
+    function add()
     {
         $private_key = $GLOBALS["request"]->private_key;
-        $issuer_public_key = private_key_to_public_key($private_key);
+        $issuer_public_key = algo_gen_hash($private_key, SLOPT_PRIVATE_KEY_TO_PUBLIC_KEY);
+        $issuer_public_key_h = algo_gen_hash($issuer_public_key, SLOPT_PUBLIC_KEY_DIRNAME);
         $signer_public_key = $GLOBALS["request"]->public_key;
-        $signer_public_key_h = algo_gen_base34_hash($signer_public_key);
+        $signer_public_key_h = algo_gen_hash($signer_public_key, SLOPT_PUBLIC_KEY_DIRNAME);
         $issuer_message = $GLOBALS["request"]->message;
         $sign_expires = $GLOBALS["request"]->expires;
 
@@ -26,8 +27,11 @@ trait create_sign_request
             return json_response();
         }
 
-        if (!is_dir($public_key_d = SIGNING_PATH . $signer_public_key_h)) {
-            mkdir($public_key_d, 775);
+        if (!is_dir($from_dir = CONTRACT_FROM_PATH . $issuer_public_key_h)) {
+            mkdir($from_dir, 775);
+        }
+        if (!is_dir($to_dir = CONTRACT_TO_PATH . $signer_public_key_h)) {
+            mkdir($to_dir, 775);
         }
 
         $id = gen_skyid();
@@ -50,7 +54,8 @@ trait create_sign_request
         ];
 
         $sign_json = json_encode($sign_data);
-        file_put_contents($public_key_d . "/" . algo_gen_base34_hash($id), encrypt_message($sign_json, $signer_public_key_h));
+        file_put_contents($from_dir . "/" . algo_gen_hash($id, SLOPT_SKYID_HASH), encrypt_message($sign_json, algo_gen_hash($issuer_public_key, SLOPT_PUBLIC_KEY_KEY)));
+        file_put_contents($to_dir . "/" . algo_gen_hash($id, SLOPT_SKYID_HASH), encrypt_message($sign_json, algo_gen_hash($signer_public_key, SLOPT_PUBLIC_KEY_KEY)));
 
         add_message("info", "Signing request created successfully.");
 

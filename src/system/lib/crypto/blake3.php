@@ -461,14 +461,14 @@ class BLAKE3
     }
 }
 
-function hmac_blake3($content, $key)
+function hmac_blake3($content, $key, $length = BLAKE3_XOF_LENGTH)
 {
     $b2 = new BLAKE3($key);
-    return $b2->hash($content, BLAKE3_XOF_LENGTH);
+    return $b2->hash($content, $length);
 }
 
-function blake3($content)
+function blake3($content, $length = BLAKE3_XOF_LENGTH)
 {
     $b2 = new BLAKE3();
-    return bin2hex($b2->hash($content, BLAKE3_XOF_LENGTH));
+    return bin2hex($b2->hash($content, $length));
 }

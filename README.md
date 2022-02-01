@@ -25,21 +25,19 @@ With a private key it is possible to calculate your public key, but with a publi
 - Anonymous and custom identities without revealing the real identity of the keypair holder;
 - Based on symmetric and asymmetric encryption, no information is stored in plain text in the network storage.
 - Keys and values are never stored directly in the network storage;
-- Fast and instant content delivery network - no network authenticity required;
+- Fast and instant content delivery network - no network confirmations required;
 - Easy implementation and use.
-- It is naturally impossible to spoof information.
+- It is naturally *impossible* to spoof information.
 
 ## Security Considerations
 
 There is no perfect system, but there are procedures that make a network secure enough to don't have problems in the future. This system uses the latest encryption technologies and tends to be secure.
 
-Read `doc/considerations.md` to understand the best security practices for a network that can store identities.
+Read the [security considerations section](https://starless-sky-protocol.github.io/docs/#/considerations) to understand the best security practices for a network that can store identities.
 
 ## Documentation
 
-For system documentation, consult the `doc` folder inside this repository. You should start learning from `getting-started.md`.
-
-After setting up, test your network using the testing utility in this repository. Read `building-tests.md` to get started with tests.
+You can read documentation about Starless Sky Network, API and resources for developers at https://starless-sky-protocol.github.io/docs/.
 
 ## Roadmap
 
@@ -60,6 +58,7 @@ If you support a more private and decentralized internet, consider keeping this 
     Ethereum:      0x8d2ced9d9229149fdbd216284f4bb8d147a50d93
     BNB (BSC):     0x8d2ced9d9229149fdbd216284f4bb8d147a50d93
     USDT (TRX):    TQFprvPVJJTgiiPMZehSnTY5P4RSQCSeNR
+    Monero:        859NqG14v9r49w31cdSFm1Hy5ifGGn6QdXhUYNuqbJddWyoULPQjqm8HuZz7b3JcR1hr9Gvq9u4vSHrRutMBYb6f4nQ21Jc
 
 ## Credits and used third-party technologies
 

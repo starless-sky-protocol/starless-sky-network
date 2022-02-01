@@ -2,30 +2,37 @@
 
 namespace svc\message;
 
-trait read_from_receiver
+trait read
 {
-    public function read_from_receiver($id)
+    public function read($id)
     {
         $private_key = $GLOBALS["request"]->private_key;
-        $public_key = private_key_to_public_key($private_key);
-        $public_key_h = algo_gen_base34_hash($public_key);
+        $public_key = algo_gen_hash($private_key, SLOPT_PRIVATE_KEY_TO_PUBLIC_KEY);
+        $public_key_h = algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_DIRNAME);
 
         if (!is_private_key_valid($private_key)) {
             add_message("error", "Invalid private key.");
             return json_response();
         }
 
-        if (!is_dir($public_key_d = MESSAGES_PATH . $public_key_h)) {
-            add_message("warn", "This private key doesn't has any messages");
+        $dir = SENT_PATH;
+    tryagain:
+        if (!is_dir($public_key_d = $dir . $public_key_h)) {
+            if($dir == SENT_PATH) {
+                $dir = INBOX_PATH;
+                goto tryagain;
+            } else {
+                add_message("warn", "This private key doesn't has any messages");
+            }
         }
 
-        if (!is_file($file_path = $public_key_d . "/" . algo_gen_base34_hash($id))) {
+        if (!is_file($file_path = $public_key_d . "/" . algo_gen_hash($id, SLOPT_SKYID_HASH))) {
             add_message("error", "Message not found");
             return json_response();
         }
 
         $message_content = file_get_contents($file_path);
-        $message_decrypted = json_decode(decrypt_message($message_content, $public_key_h));
+        $message_decrypted = json_decode(decrypt_message($message_content, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_KEY)));
         $data = [
             "id" => $message_decrypted->id,
             "manifest" => $message_decrypted->manifest,
@@ -36,8 +43,6 @@ trait read_from_receiver
                 "content" => $message_decrypted->content,
             ]
         ];
-
-        add_message("info", "Message data delivered to receiver's client");
 
         return json_response($data);
     }

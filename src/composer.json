@@ -1,7 +1,7 @@
 {
-    "name": "inphinit/inphinit",
-    "description": "A framework for easy creation of routes",
-    "keywords": [ "framework", "routing", "url", "http", "dom", "rest", "api" ],
+    "name": "project-principium/starless-sky-network",
+    "description": "Starless Sky: private, secure and untraceable identity system",
+    "keywords": [ "cryptography", "messages", "decentralized", "p2p" ],
     "license": "MIT",
     "type": "project",
     "minimum-stability": "dev",
@@ -11,12 +11,12 @@
     },
     "authors": [
         {
-            "name": "Guilherme Nascimento",
-            "email": "brcontainer@yahoo.com.br"
+            "name": "Project Principium",
+            "email": "noone@noone.com"
         }
     ],
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=7.4.*",
         "inphinit/framework": "^0.5",
         "deemru/blake2b": "^1.0"
     },

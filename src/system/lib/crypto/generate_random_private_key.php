@@ -12,9 +12,9 @@ function generante_random_private_key()
         die();
     }
 
-    $length = PRIVATE_KEY_GEN_LENGTH - get_algo_length() - 2;
+    $length = PRIVATE_KEY_GEN_LENGTH - get_algo_length();
     $r = openssl_random_pseudo_bytes($length, $force);
-    $m = algo_gen_base34_hash($server_id) . $r;
+    $m = algo_gen_hash($server_id, SLOPT_DEFAULT) . $r;
     $d = encrypt_message($m, "");
     return $d;
 }

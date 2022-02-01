@@ -1,6 +1,6 @@
 <?php
 
-namespace svc\message;
+namespace svc\signing;
 
 trait browse
 {
@@ -18,10 +18,10 @@ trait browse
 
         switch (strtolower($folder)) {
             case "inbox":
-                $dir = INBOX_PATH;
+                $dir = CONTRACT_FROM_PATH;
                 break;
             case "sent":
-                $dir = SENT_PATH;
+                $dir = CONTRACT_TO_PATH;
                 break;
             default:
                 add_message("error", "Invalid folder. It must be 'inbox' or 'sent'.");
@@ -37,7 +37,7 @@ trait browse
                         "total" => 0,
                         "query" => 0
                     ],
-                    "messages" => []
+                    "contracts" => []
                 ]
             );
         }
@@ -58,22 +58,19 @@ trait browse
 
         foreach (array_slice($glob, $pagination_data->skip, $pagination_data->take == -1 ? count($glob) : $pagination_data->take) as $message) {
             $message_content = file_get_contents($message);
-            $message_decrypted = json_decode(decrypt_message($message_content, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_KEY)));
+            $contract_decrypted = json_decode(decrypt_message($message_content, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_KEY)));
             $data[] = [
-                "id" => $message_decrypted->id,
-                "created_at" => $message_decrypted->manifest->created_at,
-                "is_modified" => $message_decrypted->manifest->is_modified,
-                "from" => $message_decrypted->pair->from,
-                "to" => $message_decrypted->pair->to,
-                "message" => [
-                    "subject" => substr($message_decrypted->subject, 0, 32),
-                    "content" => substr($message_decrypted->content, 0, 32),
-                ]
+                "id" => $contract_decrypted->id,
+                "issued" => $contract_decrypted->issued,
+                "from" => $contract_decrypted->issuer->public_key,
+                "to" => $contract_decrypted->signer->public_key,
+                "message" => $contract_decrypted->message,
+                "sign_status" => $contract_decrypted->status->sign_status
             ];
         }
 
         usort($data, function ($a, $b) {
-            return $a["created_at"] <=> $b["created_at"];
+            return $a["issued"] <=> $b["issued"];
         });
 
         add_message("info", "Query performed successfully");
@@ -84,7 +81,7 @@ trait browse
                     "total" => count($glob),
                     "query" => count($data)
                 ],
-                "messages" => array_reverse($data)
+                "contracts" => array_reverse($data)
             ]
         );
     }
