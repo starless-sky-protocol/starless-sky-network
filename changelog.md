@@ -1,5 +1,15 @@
 # Changelog
 
+## Version **0.16** Alpha
+
+Development branch: `ALPHA`
+
+- Add mnemonics to key pair generation, and reduced private key to it's BLAKE3 notation.
+- Multicast is now supported. Send using `public_keys` instead of `public_key` in the `send-message` method.
+- PHP Error messages (when development) will be included on error response too.
+- Removed `config.php`.
+- `composer.json` fixes.
+
 ## Version **0.15** Build **600**
 
 Development branch: Alpha Release

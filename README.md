@@ -64,4 +64,5 @@ If you support a more private and decentralized internet, consider keeping this 
 
 - BLAKE3 hash algorithm by [BLAKE3-Team](https://github.com/BLAKE3-team/BLAKE3)
 - Inphinit Framework by [Inphinit](https://github.com/inphinit/inphinit)
+- Bitcoin-Lib-PHP by [Bit-Wasp](https://github.com/Bit-Wasp/bitcoin-lib-php)
 - Cryptography research community.

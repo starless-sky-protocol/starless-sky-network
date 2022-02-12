@@ -11,7 +11,7 @@ trait sign
         $signer_public_key_h = algo_gen_hash($signer_public_key, SLOPT_PUBLIC_KEY_DIRNAME);
         $term = $GLOBALS["request"]->term;
 
-        if (!is_private_key_valid($private_key)) {
+        if (!is_hash_valid($private_key)) {
             add_message("error", "Invalid private key.");
             return json_response();
         }
@@ -22,10 +22,10 @@ trait sign
             return json_response();
         }
 
-        $to_symetric_key = algo_gen_hash($signer_public_key, SLOPT_PUBLIC_KEY_KEY);
+        $to_symetric_key = algo_gen_hash($signer_public_key, SLOPT_PUBLIC_KEY_SECRET);
         $sign_data = json_decode(decrypt_message(file_get_contents($to_path), $to_symetric_key));
         $from_path = CONTRACT_FROM_PATH . algo_gen_hash($sign_data->issuer->public_key, SLOPT_PUBLIC_KEY_DIRNAME) . '/' . algo_gen_hash($id, SLOPT_SKYID_HASH);
-        $from_symetric_key = algo_gen_hash($sign_data->issuer->public_key, SLOPT_PUBLIC_KEY_KEY);
+        $from_symetric_key = algo_gen_hash($sign_data->issuer->public_key, SLOPT_PUBLIC_KEY_SECRET);
 
         $now = time();
         if ($now + $sign_data->expires < $now) {

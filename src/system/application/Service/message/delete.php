@@ -16,15 +16,15 @@ trait delete
         $public_key_h = algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_DIRNAME);
         $id_h = algo_gen_hash($id, SLOPT_SKYID_HASH);
 
-        if (!is_private_key_valid($private_key)) {
+        if (!is_hash_valid($private_key)) {
             add_message("error", "Invalid private key.");
             return json_response();
         }
 
         $dir = SENT_PATH;
-    tryagain:
+        tryagain:
         if (!is_dir($public_key_d = $dir . $public_key_h)) {
-            if($dir == SENT_PATH) {
+            if ($dir == SENT_PATH) {
                 $dir = INBOX_PATH;
                 goto tryagain;
             } else {
@@ -32,39 +32,40 @@ trait delete
             }
         }
 
-        if (!is_file($file_path = $public_key_d . "/" . $id_h)) {
-            add_message("error", "Message not found");
-            return json_response();
+        $file_path = $public_key_d . "/" . $id_h;
+        if (!is_file($file_path)) {
+            if ($dir == SENT_PATH) {
+                $dir = INBOX_PATH;
+                goto tryagain;
+            } else {
+                add_message("error", "Message not found");
+                return json_response();
+            }
         }
 
         $message_content = file_get_contents($file_path);
-        $message_decrypted = json_decode(decrypt_message($message_content, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_KEY)));
-        if ($dir == SENT_PATH) {
-            if ($message_decrypted->pair->from != $public_key) {
-                add_message("error", "Insufficient permissions to delete this message. You do not own it.");
-                return json_response();
-            }
-        } else {
-            if ($message_decrypted->pair->to != $public_key) {
-                add_message("error", "Insufficient permissions to delete this message. You do not own it.");
-                return json_response();
+        $message_decrypted = json_decode(decrypt_message($message_content, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_SECRET)));
+
+        if($dir == INBOX_PATH) { // found message on inbox folder, so he received it
+            // delete for receiver
+            $file = INBOX_PATH . $public_key_h . "/" . $id_h;
+            unlink($file);
+        } else { // found message on his sent folder, so he sent it
+            // delete for sender
+            $file = SENT_PATH . $public_key_h . "/" . $id_h;
+            unlink($file);
+
+            // delete for receivers
+            $storeTo = $message_decrypted->pair->to;
+            foreach ($storeTo as $to_public_key) {
+                $to_public_key_h = algo_gen_hash($to_public_key, SLOPT_PUBLIC_KEY_DIRNAME);
+                $file = INBOX_PATH . $to_public_key_h . "/" . $id_h;
+                if(is_file($file) /*check if file wasn't already deleted by receiver*/) unlink($file);
             }
         }
 
-        $fromPublicKeyDirname = algo_gen_hash($message_decrypted->pair->from, SLOPT_PUBLIC_KEY_DIRNAME);
-        $toPublicKeyDirname = algo_gen_hash($message_decrypted->pair->to, SLOPT_PUBLIC_KEY_DIRNAME);
-
-        $a = true;
-        if($message_decrypted->pair->from != null) $a = unlink(SENT_PATH . $fromPublicKeyDirname . "/" . $id_h);
-        
-        $b = unlink(INBOX_PATH . $toPublicKeyDirname . "/" . $id_h);
-
-        if ($a && $b) {
-            add_message("info", "Message successfully deleted");
-        } else {
-            add_message("error", "Cannot delete message");
-        }
-
+        finish:
+        add_message("info", "Message successfully deleted");
         return json_response();
     }
 }

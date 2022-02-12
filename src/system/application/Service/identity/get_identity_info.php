@@ -6,26 +6,53 @@ trait get_identity_info
 {
     public function get_identity_info()
     {
-        $public_key = $GLOBALS["request"]->public_key;
-        $public_key_h = algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_DIRNAME);
+        $public_keys = $GLOBALS["request"]->public_keys;
 
-        if (!is_public_key_valid($public_key)) {
-            add_message("error", "Invalid public key.");
+        $response = [];
+        if (!is_array($public_keys)) {
+            add_message("error", "Invalid array data received.");
             return json_response();
+        } else {
+            foreach ($public_keys as $public_key) {
+                $public_key_h = algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_DIRNAME);
+                if (!is_hash_valid($public_key)) {
+                    $response[] = [
+                        "public_key" => $public_key,
+                        "status" => "invalid",
+                        "identity" => [
+                            "name" => null,
+                            "biography" => null
+                        ]
+                    ];
+                    continue;
+                }
+                if (!is_file(IDENTITY_PATH . $public_key_h)) {
+                    $response[] = [
+                        "public_key" => $public_key,
+                        "status" => "not_found",
+                        "identity" => [
+                            "name" => null,
+                            "biography" => null
+                        ]
+                    ];
+                    continue;
+                }
+
+                $encryptedData = file_get_contents(IDENTITY_PATH . $public_key_h);
+                $raw = decrypt_message($encryptedData, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_SECRET));
+                $identity_data = json_decode($raw);
+
+                $response[] = [
+                    "public_key" => $public_key,
+                    "status" => "found",
+                    "identity" => [
+                        "name" => $identity_data->public->name,
+                        "biography" => $identity_data->public->biography
+                    ]
+                ];
+            }
         }
 
-        if (!is_file(IDENTITY_PATH . $public_key_h)) {
-            add_message("error", "There is no identity associated with this public key on this network.");
-            return json_response();
-        }
-
-        $encryptedData = file_get_contents(IDENTITY_PATH . $public_key_h);
-        $raw = decrypt_message($encryptedData, $public_key);
-
-        $identity_data = json_decode($raw);
-
-        add_message("info", "Network Identity info fetched");
-
-        return json_response($identity_data->public);
+        return json_response($response);
     }
 }

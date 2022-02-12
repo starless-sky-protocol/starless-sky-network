@@ -14,11 +14,11 @@ trait add
         $issuer_message = $GLOBALS["request"]->message;
         $sign_expires = $GLOBALS["request"]->expires;
 
-        if (!is_private_key_valid($private_key)) {
+        if (!is_hash_valid($private_key)) {
             add_message("error", "Invalid issuer private key.");
             return json_response();
         }
-        if (!is_public_key_valid($signer_public_key)) {
+        if (!is_hash_valid($signer_public_key)) {
             add_message("error", "Invalid receiver public key.");
             return json_response();
         }
@@ -54,8 +54,8 @@ trait add
         ];
 
         $sign_json = json_encode($sign_data);
-        file_put_contents($from_dir . "/" . algo_gen_hash($id, SLOPT_SKYID_HASH), encrypt_message($sign_json, algo_gen_hash($issuer_public_key, SLOPT_PUBLIC_KEY_KEY)));
-        file_put_contents($to_dir . "/" . algo_gen_hash($id, SLOPT_SKYID_HASH), encrypt_message($sign_json, algo_gen_hash($signer_public_key, SLOPT_PUBLIC_KEY_KEY)));
+        file_put_contents($from_dir . "/" . algo_gen_hash($id, SLOPT_SKYID_HASH), encrypt_message($sign_json, algo_gen_hash($issuer_public_key, SLOPT_PUBLIC_KEY_SECRET)));
+        file_put_contents($to_dir . "/" . algo_gen_hash($id, SLOPT_SKYID_HASH), encrypt_message($sign_json, algo_gen_hash($signer_public_key, SLOPT_PUBLIC_KEY_SECRET)));
 
         add_message("info", "Signing request created successfully.");
 

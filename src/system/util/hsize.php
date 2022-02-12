@@ -20,8 +20,8 @@ function parse_hsize(string $hsize): int
 
 function hsize($size)
 {
-    if ($size >= 1 << 30) return floor($size / (1 << 30), 2) . " Gb";
-    if ($size >= 1 << 20) return floor($size / (1 << 20), 2) . " Mb";
-    if ($size >= 1 << 10) return floor($size / (1 << 10), 2) . " Kb";
+    if ($size >= 1 << 30) return floor($size / (1 << 30)) . " Gb";
+    if ($size >= 1 << 20) return floor($size / (1 << 20)) . " Mb";
+    if ($size >= 1 << 10) return floor($size / (1 << 10)) . " Kb";
     return floor($size) . " bytes";
 }

@@ -10,7 +10,7 @@ trait set_identity_info
         $public_key = algo_gen_hash($private_key, SLOPT_PRIVATE_KEY_TO_PUBLIC_KEY);
         $public_key_h = algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_DIRNAME);
 
-        if (!is_private_key_valid($private_key)) {
+        if (!is_hash_valid($private_key)) {
             add_message("error", "Invalid private key.");
             return json_response();
         }
@@ -32,7 +32,7 @@ trait set_identity_info
             return json_response();
         }
 
-        $encrypted = encrypt_message($rawData, $public_key);
+        $encrypted = encrypt_message($rawData, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_SECRET));
 
         file_put_contents(IDENTITY_PATH . $public_key_h, $encrypted);
 

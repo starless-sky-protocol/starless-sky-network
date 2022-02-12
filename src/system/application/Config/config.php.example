@@ -1,19 +1,21 @@
 <?php
 return array(
     'development' => true,
+    'dns' => 'starlessskynetworkserver.test',
     'crypto' => [
         'base_hmac_key' => "",
+        'base_hash_salt' => "",
         'base_symetric_key' => "",
         'base_symetric_iv_seed' => "",
         'private_key_server_id' => "",
         'skyid_instance' => 1000
     ],
     'information' => [
-        'allow_not_identified_senders' => false,
         'allow_message_edit' => true,
         'allow_message_deletion' => true,
+        'multicast_max_receivers' => 50,
         'message_max_size' => '2M',
-        'sign_message_max_size' => '256K',
+        'sign_message_max_size' => '5M',
         'sign_max_expiration' => 3600
     ]
 );

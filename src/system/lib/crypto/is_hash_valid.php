@@ -1,6 +1,6 @@
 <?php
 
-function is_public_key_valid($public_key)
+function is_hash_valid($public_key)
 {
     if (strpos($public_key, "0x") != 0) {
         return false;

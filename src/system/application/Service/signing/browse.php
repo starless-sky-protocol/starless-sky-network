@@ -11,7 +11,7 @@ trait browse
         $public_key = algo_gen_hash($private_key, SLOPT_PRIVATE_KEY_TO_PUBLIC_KEY);
         $public_key_h = algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_DIRNAME);
 
-        if (!is_private_key_valid($private_key)) {
+        if (!is_hash_valid($private_key)) {
             add_message("error", "Invalid private key.");
             return json_response();
         }
@@ -58,7 +58,7 @@ trait browse
 
         foreach (array_slice($glob, $pagination_data->skip, $pagination_data->take == -1 ? count($glob) : $pagination_data->take) as $message) {
             $message_content = file_get_contents($message);
-            $contract_decrypted = json_decode(decrypt_message($message_content, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_KEY)));
+            $contract_decrypted = json_decode(decrypt_message($message_content, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_SECRET)));
             $data[] = [
                 "id" => $contract_decrypted->id,
                 "issued" => $contract_decrypted->issued,

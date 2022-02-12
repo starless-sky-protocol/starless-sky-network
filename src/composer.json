@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4.*",
+        "php": ">=7.4",
         "inphinit/framework": "^0.5",
         "deemru/blake2b": "^1.0"
     },

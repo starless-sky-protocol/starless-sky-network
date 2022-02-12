@@ -28,5 +28,6 @@ foreach(glob(INPHINIT_PATH . "util/*.php") as $file){
 require_once INPHINIT_PATH . 'lib/__driver.php';
 require_once INPHINIT_PATH . 'boot/errorhandler.php';
 require_once INPHINIT_PATH . 'boot/services.php';
+require_once INPHINIT_PATH . 'boot/cors.php';
 
 App::exec();
