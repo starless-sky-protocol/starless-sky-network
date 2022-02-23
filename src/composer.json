@@ -1,7 +1,12 @@
 {
     "name": "project-principium/starless-sky-network",
     "description": "Starless Sky: private, secure and untraceable identity system",
-    "keywords": [ "cryptography", "messages", "decentralized", "p2p" ],
+    "keywords": [
+        "cryptography",
+        "messages",
+        "decentralized",
+        "p2p"
+    ],
     "license": "MIT",
     "type": "project",
     "minimum-stability": "dev",
@@ -18,7 +23,7 @@
     "require": {
         "php": ">=7.4",
         "inphinit/framework": "^0.5",
-        "deemru/blake2b": "^1.0"
+        "phpseclib/phpseclib": "~3.0"
     },
     "autoload": {
         "psr-4": {

@@ -2,19 +2,20 @@
 
 define("IV_LENGTH", 16);
 
-function get_random_iv() {
+function get_random_iv()
+{
     $b2 = new BLAKE3();
-    return base64_encode($b2->hash(config("crypto.base_symetric_iv_seed") . time() . rand(), IV_LENGTH - 4));
+    return base64_encode($b2->hash(config("crypto_key") . time() . rand(), IV_LENGTH - 4));
 }
 
-function encrypt_message($message, $key)
+function encrypt_message($message, $sharedKey)
 {
     $iv = get_random_iv();
 
     $output = openssl_encrypt(
         $message,
         'AES-128-CBC',
-        hmac_blake3($key, config("crypto.base_symetric_key")),
+        hmac_blake3($sharedKey, config("crypto_key")),
         0,
         $iv
     );
@@ -22,7 +23,7 @@ function encrypt_message($message, $key)
     return $iv . $output;
 }
 
-function decrypt_message($message, $key)
+function decrypt_message($message, $sharedKey)
 {
     $iv_length = strlen(get_random_iv());
 
@@ -35,7 +36,7 @@ function decrypt_message($message, $key)
     $output = openssl_decrypt(
         $data,
         'AES-128-CBC',
-        hmac_blake3($key, config("crypto.base_symetric_key")),
+        hmac_blake3($sharedKey, config("crypto_key")),
         0,
         $iv
     );

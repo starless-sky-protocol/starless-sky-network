@@ -2,16 +2,20 @@
 
 namespace svc\message;
 
+DEFINE("MESSAGE_ADD_COMMAND", "message.send");
+
 trait add
 {
     public function add()
     {
-        $private_key = $GLOBALS["request"]->private_key;
+        $private_key_raw = $GLOBALS["request"]->private_key;
+        $private_key = load($private_key_raw);
         $public_keys = $GLOBALS["request"]->public_keys;
         $message = $GLOBALS["request"]->message;
 
-        $sender_public_key = algo_gen_hash($private_key, SLOPT_PRIVATE_KEY_TO_PUBLIC_KEY);
-        $sender_public_key_h = algo_gen_hash($sender_public_key, SLOPT_PUBLIC_KEY_DIRNAME);
+        $sender_public_key_obj = $private_key->getPublicKey();
+        $sender_public_key_hash = algo_gen_hash($sender_public_key_obj->toString("PKCS8"), SLOPT_PUBLIC_KEY_ADDRESS);
+        $sender_public_key_h = algo_gen_hash($sender_public_key_hash, SLOPT_PUBLIC_KEY_DIRNAME);
 
         if (!is_array($public_keys)) {
             add_message("error", "'public_keys' must be an array of public keys.");
@@ -49,25 +53,36 @@ trait add
                     "message_blake3_digest" => blake3($message->content . $message->subject)
                 ],
                 "pair" => [
-                    "from" => $sender_public_key,
+                    "from" => $sender_public_key_hash,
                     "to" => $public_keys
                 ]
             ];
-            $message_json = json_encode($message_x);
 
             if (!is_dir($b_path = SENT_PATH . $sender_public_key_h)) {
                 mkdir($b_path, 775);
             }
 
-            $message_json_data_for_sender = encrypt_message($message_json, algo_gen_hash($sender_public_key, SLOPT_PUBLIC_KEY_SECRET));
+            $sharedKey = $private_key->toString("PKCS8");
+            $message_y = $message_x;
+            $message_y["id"] = encrypt_message($message_x["id"], $sharedKey);
+            $message_y["manifest"] = encrypt_message(json_encode($message_x["manifest"]), $sharedKey);
+            $message_y["content"] = encrypt_message($message->content, $sharedKey);
+            $message_y["subject"] = encrypt_message($message->subject, $sharedKey);
+
+            $message_json_data_for_sender = encrypt_message(json_encode($message_y), "");
             file_put_contents($b_path . "/" . $id_h, $message_json_data_for_sender);
 
             $sent = 0;
             foreach ($public_keys as $public_key) {
                 $public_key_h = algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_DIRNAME);
-                
-                if (strcmp($public_key, $sender_public_key) == 0) {
+
+                if (strcmp($public_key, $sender_public_key_hash) == 0) {
                     add_message("warn", "Sender public key cannot be the same as the target public key. Ignoring this receiver.");
+                    continue;
+                }
+
+                if (!is_hash_valid($public_key)) {
+                    add_message("warn", "Received invalid hash. Ignoring this receiver.");
                     continue;
                 }
 
@@ -75,7 +90,17 @@ trait add
                     mkdir($b_path, 775);
                 }
 
-                $message_json_data_for_receiver = encrypt_message($message_json, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_SECRET));
+                $sharedKey = shared_key($private_key, load_from_public_hash($public_key));
+
+                $message_y = $message_x;
+
+                $message_y["id"] = encrypt_message($message_x["id"], $sharedKey);
+                $message_y["manifest"] = encrypt_message(json_encode($message_x["manifest"]), $sharedKey);
+                $message_y["content"] = encrypt_message($message->content, $sharedKey);
+                $message_y["subject"] = encrypt_message($message->subject, $sharedKey);
+
+                $message_y_json = json_encode($message_y);
+                $message_json_data_for_receiver = encrypt_message($message_y_json, "");
                 file_put_contents($b_path . "/" . $id_h, $message_json_data_for_receiver);
 
                 $sent++;
@@ -86,7 +111,7 @@ trait add
         return json_response(
             [
                 "pair" => [
-                    "from" => $sender_public_key,
+                    "from" => $sender_public_key_hash,
                     "to" => $public_keys
                 ],
                 "message_length" => hsize(strlen($message->content . $message->subject)),

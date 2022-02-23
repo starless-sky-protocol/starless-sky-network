@@ -11,19 +11,16 @@ trait delete
             return json_response();
         }
 
-        $private_key = $GLOBALS["request"]->private_key;
-        $public_key = algo_gen_hash($private_key, SLOPT_PRIVATE_KEY_TO_PUBLIC_KEY);
-        $public_key_h = algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_DIRNAME);
+        $private_key_raw = $GLOBALS["request"]->private_key;
+        $private_key = load($private_key_raw);
+        $public_key = $private_key->getPublicKey();
+        $public_key_h = algo_gen_hash($public_key->toString("PKCS8"), SLOPT_PUBLIC_KEY_ADDRESS);
+        $public_key_d = algo_gen_hash($public_key_h, SLOPT_PUBLIC_KEY_DIRNAME);
         $id_h = algo_gen_hash($id, SLOPT_SKYID_HASH);
-
-        if (!is_hash_valid($private_key)) {
-            add_message("error", "Invalid private key.");
-            return json_response();
-        }
 
         $dir = SENT_PATH;
         tryagain:
-        if (!is_dir($public_key_d = $dir . $public_key_h)) {
+        if (!is_dir($fullpath = $dir . $public_key_d)) {
             if ($dir == SENT_PATH) {
                 $dir = INBOX_PATH;
                 goto tryagain;
@@ -32,7 +29,7 @@ trait delete
             }
         }
 
-        $file_path = $public_key_d . "/" . $id_h;
+        $file_path = $fullpath . "/" . $id_h;
         if (!is_file($file_path)) {
             if ($dir == SENT_PATH) {
                 $dir = INBOX_PATH;
@@ -44,15 +41,15 @@ trait delete
         }
 
         $message_content = file_get_contents($file_path);
-        $message_decrypted = json_decode(decrypt_message($message_content, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_SECRET)));
+        $message_decrypted = json_decode(decrypt_message($message_content, ""));
 
-        if($dir == INBOX_PATH) { // found message on inbox folder, so he received it
+        if ($dir == INBOX_PATH) { // found message on inbox folder, so he received it
             // delete for receiver
-            $file = INBOX_PATH . $public_key_h . "/" . $id_h;
+            $file = INBOX_PATH . $public_key_d . "/" . $id_h;
             unlink($file);
         } else { // found message on his sent folder, so he sent it
             // delete for sender
-            $file = SENT_PATH . $public_key_h . "/" . $id_h;
+            $file = SENT_PATH . $public_key_d . "/" . $id_h;
             unlink($file);
 
             // delete for receivers
@@ -60,7 +57,7 @@ trait delete
             foreach ($storeTo as $to_public_key) {
                 $to_public_key_h = algo_gen_hash($to_public_key, SLOPT_PUBLIC_KEY_DIRNAME);
                 $file = INBOX_PATH . $to_public_key_h . "/" . $id_h;
-                if(is_file($file) /*check if file wasn't already deleted by receiver*/) unlink($file);
+                if (is_file($file) /*check if file wasn't already deleted by receiver*/) unlink($file);
             }
         }
 

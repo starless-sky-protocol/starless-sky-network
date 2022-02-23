@@ -8,7 +8,7 @@ function is_hash_valid($public_key)
     if (!preg_match('/^[a-f0-9x]+$/', $public_key)) {
         return false;
     }
-    if (strlen($public_key) - 2 != get_algo_length()) {
+    if ((strlen($public_key) - 2) * 2 != SLOPT_PUBLIC_KEY_ADDRESS["length"] * 4) {
         return false;
     }
     return true;

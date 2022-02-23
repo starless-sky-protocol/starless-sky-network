@@ -7,14 +7,11 @@ trait browse
     public function browse()
     {
         $folder = $GLOBALS["request"]->folder;
-        $private_key = $GLOBALS["request"]->private_key;
-        $public_key = algo_gen_hash($private_key, SLOPT_PRIVATE_KEY_TO_PUBLIC_KEY);
-        $public_key_h = algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_DIRNAME);
-
-        if (!is_hash_valid($private_key)) {
-            add_message("error", "Invalid private key.");
-            return json_response();
-        }
+        $private_key_raw = $GLOBALS["request"]->private_key;
+        $private_key = load($private_key_raw);
+        $public_key = $private_key->getPublicKey();
+        $public_key_h = algo_gen_hash($public_key->toString("PKCS8"), SLOPT_PUBLIC_KEY_ADDRESS);
+        $public_key_d = algo_gen_hash($public_key_h, SLOPT_PUBLIC_KEY_DIRNAME);
 
         switch (strtolower($folder)) {
             case "inbox":
@@ -29,7 +26,7 @@ trait browse
         }
 
         tryagain:
-        if (!is_dir($directory = $dir . $public_key_h)) {
+        if (!is_dir($directory = $dir . $public_key_d)) {
             add_message("warn", "Your query did not return any information.");
             return json_response(
                 [
@@ -58,17 +55,24 @@ trait browse
 
         foreach (array_slice($glob, $pagination_data->skip, $pagination_data->take == -1 ? count($glob) : $pagination_data->take) as $message) {
             $message_content = file_get_contents($message);
-            $message_decrypted = json_decode(decrypt_message($message_content, algo_gen_hash($public_key, SLOPT_PUBLIC_KEY_SECRET)));
+            $message_decrypted = json_decode(decrypt_message($message_content, ""));
+
+            $sharedKey = strcmp($message_decrypted->pair->from, $public_key_h) == 0
+                ? $private_key->toString("PKCS8")
+                : shared_key($private_key, load_from_public_hash($message_decrypted->pair->from));
+
+            $manifest = json_decode(decrypt_message($message_decrypted->manifest, $sharedKey));
+
             $data[] = [
-                "id" => $message_decrypted->id,
-                "created_at" => $message_decrypted->manifest->created_at,
-                "is_modified" => $message_decrypted->manifest->is_modified,
+                "id" => decrypt_message($message_decrypted->id, $sharedKey),
+                "created_at" => $manifest->created_at,
+                "is_modified" => $manifest->is_modified,
                 "from" => $message_decrypted->pair->from,
                 "to" => $message_decrypted->pair->to,
                 "read" => $message_decrypted->read,
                 "message" => [
-                    "subject" => substr($message_decrypted->subject, 0, 32),
-                    "content" => substr($message_decrypted->content, 0, 32),
+                    "subject" => substr(decrypt_message($message_decrypted->subject, $sharedKey), 0, 32),
+                    "content" => substr(decrypt_message($message_decrypted->content, $sharedKey), 0, 32),
                 ]
             ];
         }
