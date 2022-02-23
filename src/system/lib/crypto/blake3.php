@@ -1,13 +1,34 @@
 <?php
+
 /*
-PHP implementation of BLAKE3
+    Project Starless Sky Protocol
+    Copyright 2022 Project Principium and Starless Sky authors
 
-https://github.com/BLAKE3-team/BLAKE3-specs/blob/master/blake3.pdf
+    This project is distributed under the MIT License, that is, you can modify,
+    publish or sell this file, as long as you have brief mention of the project
+    and the code snippet used (if not all).
 
-https://github.com/BLAKE3-team/BLAKE3
+    The project is distributed under no warranty, that is, there is no
+    responsibility for consequences or contents circulating in the
+    networks created by this project.
 
-@denobisipsis 2021
-@project-principium/starless-sky-network 2022
+    Editing this file will directly interfere with the functioning of your
+    network. Unless you know what you're doing, read the documentation.
+    If you think this edit is interesting for the project, submit a commit in the
+    project official repository:
+
+    https://github.com/starless-sky-protocol/starless-sky-network
+
+    ============================================================================
+
+    PHP implementation of BLAKE3
+
+    https://github.com/BLAKE3-team/BLAKE3-specs/blob/master/blake3.pdf
+
+    https://github.com/BLAKE3-team/BLAKE3
+
+    @denobisipsis 2021
+    @project-principium/starless-sky-network 2022
 */
 
 DEFINE("BLAKE3_XOF_LENGTH", 32);

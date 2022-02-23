@@ -1,12 +1,11 @@
 <?php
 
 define('STORAGE_PATH', INPHINIT_ROOT . 'storage/');
-define("INBOX_PATH", STORAGE_PATH . "messages/");
-define("SENT_PATH", STORAGE_PATH . "sent/");
+define("INBOX_PATH", STORAGE_PATH . "messages-from/");
+define("SENT_PATH", STORAGE_PATH . "messages-to/");
 define("IDENTITY_PATH", STORAGE_PATH . "identity/");
 define("CONTRACT_FROM_PATH", STORAGE_PATH . "sign-from/");
 define("CONTRACT_TO_PATH", STORAGE_PATH . "sign-to/");
-define("PUBLIC_KEY_DERIVES_PATH", STORAGE_PATH . "public-keys/");
 
 if (!is_dir(STORAGE_PATH)) {
     mkdir(STORAGE_PATH, 0777) or die("Cannot create storage directory");
@@ -25,7 +24,4 @@ if (!is_dir(CONTRACT_TO_PATH)) {
 }
 if (!is_dir(SENT_PATH)) {
     mkdir(SENT_PATH, 0777) or die("Cannot create sent data directory");
-}
-if (!is_dir(PUBLIC_KEY_DERIVES_PATH)) {
-    mkdir(PUBLIC_KEY_DERIVES_PATH, 0777) or die("Cannot create public key derives directory");
 }

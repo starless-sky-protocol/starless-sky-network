@@ -1,8 +1,6 @@
 <?php
 
 /*
-    /index.php
-
     Project Starless Sky Protocol
     Copyright 2022 Project Principium and Starless Sky authors
 
@@ -22,11 +20,10 @@
     https://github.com/starless-sky-protocol/starless-sky-network
 */
 
-
 define('INPHINIT_START', microtime(true));
 define('INPHINIT_ROOT', strtr(__DIR__, '\\', '/') . '/');
 define('INPHINIT_PATH', INPHINIT_ROOT . 'system/');
 define('INPHINIT_COMPOSER', false);
-define('SLS_VERSION', "0.16.772");
+define('SLS_VERSION', "0.17.955 Alpha");
 
 require_once INPHINIT_PATH . 'boot/start.php';

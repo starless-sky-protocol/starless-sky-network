@@ -12,9 +12,9 @@ The algorithm is customizable by an environment file and centralized on servers 
 
 ## Private Keys vs Public Keys
 
-The idea of private keys and public keys is that one directly depends on the other. A public key is irreversible and cannot have the private key decrypted, but it is possible to calculate the public key from a private key. This indicates that a private key is the master access for that sender/receiver.
+The idea of private keys and public keys is that one directly depends on the other but they're not deterministic. A public key is irreversible and cannot have the private key decrypted, but it is possible to calculate the public key from a private key. This indicates that a private key is the master access for that sender/receiver.
 
-With a private key it is possible to calculate your public key, but with a public key it is impossible to calculate your private key.
+With a private key it is possible to calculate your public key, but with a public key it is impossible to calculate your private key. In this protocol, public keys are not revealed to identity holders: a deterministic address of these keys, as it is called "public address" introduces the system to its public key.
 
 > The project is still under development and its algorithm is also being developed. Some security issues may change in the future, along with how it works.
 
@@ -22,11 +22,12 @@ With a private key it is possible to calculate your public key, but with a publi
 
 - Smart contracts and signing modules; 
 - Decentralized networks;
-- Anonymous and custom identities without revealing the real identity of the keypair holder;
+- Anonymous and non-deterministic identities without revealing the real identity of the keypair holder;
+- Public key authentication;
 - Based on symmetric and asymmetric encryption, no information is stored in plain text in the network storage.
 - Keys and values are never stored directly in the network storage;
 - Fast and instant content delivery network - no network confirmations required;
-- Easy implementation and use.
+- Easy implementation, deployment and usage;
 - It is naturally *impossible* to spoof information.
 
 ## Security Considerations
@@ -38,16 +39,6 @@ Read the [security considerations section](https://starless-sky-protocol.github.
 ## Documentation
 
 You can read documentation about Starless Sky Network, API and resources for developers at https://starless-sky-protocol.github.io/docs/.
-
-## Roadmap
-
-- Broadcasting channels (one-to-many communication);
-- Groups (many-to-many communication);
-- Interface application;
-- Closed-generation servers;
-- ~~Private Keys authentication for networks~~; 💥 _New on update 0.12.204_
-- Content integrity if network information changes;
-- Store data with Blockchain;
 
 ## Donate ❤
 
@@ -64,5 +55,5 @@ If you support a more private and decentralized internet, consider keeping this 
 
 - BLAKE3 hash algorithm by [BLAKE3-Team](https://github.com/BLAKE3-team/BLAKE3)
 - Inphinit Framework by [Inphinit](https://github.com/inphinit/inphinit)
-- Bitcoin-Lib-PHP by [Bit-Wasp](https://github.com/Bit-Wasp/bitcoin-lib-php)
+- phpseclib by [phpseclib](https://github.com/phpseclib/phpseclib)
 - Cryptography research community.

@@ -12,10 +12,6 @@ if (INPHINIT_COMPOSER) {
 
 UtilsConfig();
 
-if (App::env('development')) {
-    require_once INPHINIT_PATH . 'dev.php';
-}
-
 require_once INPHINIT_PATH . 'main.php';
 require_once INPHINIT_PATH . 'boot/storage.php';
 require_once INPHINIT_PATH . 'boot/openssltests.php';
