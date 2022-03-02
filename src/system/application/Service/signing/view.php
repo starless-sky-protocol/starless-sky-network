@@ -24,9 +24,9 @@ namespace svc\signing;
 
 function view(string $private_key, string $id)
 {
-    $private_key = load($private_key);
+    $private_key = load_from_private($private_key);
     if ($private_key == false) {
-        add_message("error", "Invalid private key received");
+        add_message("error", "Invalid or not authenticated private key received");
         return false;
     }
 

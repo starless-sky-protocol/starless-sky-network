@@ -26,9 +26,9 @@ function browse(string $private_key, string $folder, array|object $pagination_da
 {
     $folder = $GLOBALS["request"]->folder;
     $private_key_raw = $GLOBALS["request"]->private_key;
-    $private_key = load($private_key_raw);
+    $private_key = load_from_private($private_key_raw);
     if ($private_key == false) {
-        add_message("error", "Invalid private key received");
+        add_message("error", "Invalid or not authenticated private key received");
         return false;
     }
     $public_key = $private_key->getPublicKey();

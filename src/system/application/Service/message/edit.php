@@ -29,12 +29,12 @@ function edit(string $from_private_key, string $id, array|object $message)
         return false;
     }
 
-    $private_key = load($from_private_key);
+    $private_key = load_from_private($from_private_key);
     if ($private_key == false) {
-        add_message("error", "Invalid private key received");
+        add_message("error", "Invalid or not authenticated private key received");
         return false;
     }
-    
+
     $public_key = $private_key->getPublicKey();
     $public_key_h = algo_gen_hash($public_key->toString("PKCS8"), SLOPT_PUBLIC_KEY_ADDRESS);
     $public_key_d = algo_gen_hash($public_key_h, SLOPT_PUBLIC_KEY_DIRNAME);
@@ -75,7 +75,7 @@ function edit(string $from_private_key, string $id, array|object $message)
             "created_at" => $manifest_decoded->created_at,
             "updated_at" => $now,
             "is_modified" => true,
-            "message_blake3_digest" => blake3($message->content . $message->subject)
+            "message_digest" => blake3($message->content . $message->subject)
         ],
         "pair" => [
             "from" => $message_decrypted->pair->from,
@@ -132,11 +132,21 @@ function edit(string $from_private_key, string $id, array|object $message)
         $sent++;
     }
 
+    $public_key_h = algo_gen_hash($private_key->getPublicKey()->toString("PKCS8"), SLOPT_PUBLIC_KEY_ADDRESS);
+
+    create_transaction(
+        "message.edit",
+        $public_key_h,
+        $message_decrypted->pair->to,
+        $id,
+        $message_x["id"] . $message_x["subject"] . $message_x["content"] . json_encode($message_x["manifest"]) . $public_key_h . json_encode($message_decrypted->pair->to)
+    );
+
     add_message("info", "Message edited using sender's private key");
     return [
         "pair" => $message_decrypted->pair,
         "message_length" => hsize(strlen($message->content . $message->subject)),
         "id" => $id,
-        "message_blake3_digest" => $message_x["manifest"]["message_blake3_digest"]
+        "message_digest" => $message_x["manifest"]["message_digest"]
     ];
 }

@@ -24,12 +24,12 @@ namespace svc\message;
 
 function read(string $private_key, string $id)
 {
-    $private_key = load($private_key);
+    $private_key = load_from_private($private_key);
     if ($private_key == false) {
-        add_message("error", "Invalid private key received");
+        add_message("error", "Invalid or not authenticated private key received");
         return false;
     }
-    
+
     $public_key = $private_key->getPublicKey();
     $public_key_h = algo_gen_hash($public_key->toString("PKCS8"), SLOPT_PUBLIC_KEY_ADDRESS);
     $public_key_d = algo_gen_hash($public_key_h, SLOPT_PUBLIC_KEY_DIRNAME);

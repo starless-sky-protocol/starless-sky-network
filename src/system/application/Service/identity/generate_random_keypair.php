@@ -35,6 +35,8 @@ function generate_random_keypair()
     ];
     set_identity_info($private_key->toString("PKCS8"), null, $private_info);
 
+    create_transaction("identity.gen-private-key");
+
     add_message("info", "Unique keypair successfully generated for this network");
     return [
         "private_key" => $private_key->toString("PKCS8"),

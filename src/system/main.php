@@ -23,8 +23,11 @@
 use Inphinit\Routing\Route;
 
 Route::set('GET', '/ping', "server_controller:ping");
+Route::set('GET', '/bc/list', "server_controller:get_closed_blocks");
+Route::set('GET', '/bc/read/{:[a-zA-Z0-9.-]+:}{:/?:}', "server_controller:read_block");
 
 Route::set('GET', '/identity/generate-keypair', "identity_controller:generate_random_keypair_handler");
+Route::set('VIEW', '/identity/auth', "identity_controller:auth_handler");
 Route::set('PUT', '/identity{:/?:}', "identity_controller:set_identity_info_handler");
 Route::set('VIEW', '/identity{:/?:}', "identity_controller:get_identity_info_handler");
 Route::set('DELETE', '/identity{:/?:}', "identity_controller:delete_identity_info_handler");

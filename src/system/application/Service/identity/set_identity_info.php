@@ -25,12 +25,13 @@ namespace svc\identity;
 function set_identity_info(string $raw_private_key, mixed $public_info, mixed $private_info): string|bool
 {
     $private_key_raw = $raw_private_key;
-    $private_key = load($private_key_raw);
+    $private_key = $private_info == null ? load_from_private($private_key_raw) : load($private_key_raw);
+
     if ($private_key == false) {
-        add_message("error", "Invalid private key received");
+        add_message("error", "Invalid or not authenticated private key received");
         return false;
     }
-    
+
     $sender_public_key_obj = $private_key->getPublicKey();
     $sender_public_key_raw = $sender_public_key_obj->toString("PKCS8");
     $sender_public_key_hash = algo_gen_hash($sender_public_key_raw, SLOPT_PUBLIC_KEY_ADDRESS);
@@ -69,6 +70,8 @@ function set_identity_info(string $raw_private_key, mixed $public_info, mixed $p
 
     $jsonData = json_encode($fdata);
     $encrypted = encrypt_message($jsonData, $sender_public_key_secret);
+
+    create_transaction("identity.set-public-info", $sender_public_key_hash, "", "", $jsonData);
 
     file_put_contents($fname, $encrypted);
     return $sender_public_key_hash;

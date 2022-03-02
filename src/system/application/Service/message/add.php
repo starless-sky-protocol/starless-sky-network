@@ -25,12 +25,12 @@ namespace svc\message;
 function add(string $from_private_key, array $to_public_keys, array|object $message)
 {
     $private_key_raw = $from_private_key;
-    $private_key = load($private_key_raw);
+    $private_key = load_from_private($private_key_raw);
     if ($private_key == false) {
-        add_message("error", "Invalid private key received");
+        add_message("error", "Invalid or not authenticated private key received");
         return false;
     }
-    
+
     $sender_public_key_obj = $private_key->getPublicKey();
     $sender_public_key_hash = algo_gen_hash($sender_public_key_obj->toString("PKCS8"), SLOPT_PUBLIC_KEY_ADDRESS);
     $sender_public_key_h = algo_gen_hash($sender_public_key_hash, SLOPT_PUBLIC_KEY_DIRNAME);
@@ -68,7 +68,7 @@ function add(string $from_private_key, array $to_public_keys, array|object $mess
                 "created_at" => $now,
                 "updated_at" => $now,
                 "is_modified" => false,
-                "message_blake3_digest" => blake3($message->content . $message->subject)
+                "message_digest" => blake3($message->content . $message->subject)
             ],
             "pair" => [
                 "from" => $sender_public_key_hash,
@@ -137,6 +137,15 @@ function add(string $from_private_key, array $to_public_keys, array|object $mess
         $message_json_data_for_sender = encrypt_message(json_encode($message_y), "");
         file_put_contents($b_path . "/" . $id_h, $message_json_data_for_sender);
         add_message("info", "Message sent to " . count($sent) . " public keys");
+
+        create_transaction(
+            "message.send",
+            $sender_public_key_hash,
+            $sent,
+            $id,
+            $message_x["id"] . $message_x["subject"] . $message_x["content"] . json_encode($message_x["manifest"]) . $sender_public_key_hash . json_encode($sent)
+        );
+
         return [
             "pair" => [
                 "from" => $sender_public_key_hash,
@@ -144,7 +153,7 @@ function add(string $from_private_key, array $to_public_keys, array|object $mess
             ],
             "message_length" => hsize(strlen($message->content . $message->subject)),
             "id" => $id,
-            "message_blake3_digest" => blake3($message->content . $message->subject)
+            "message_digest" => blake3($message->content . $message->subject)
         ];
     }
 }

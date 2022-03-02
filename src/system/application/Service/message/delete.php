@@ -30,12 +30,12 @@ function delete(string $private_key, string $id)
     }
 
     $private_key_raw = $private_key;
-    $private_key = load($private_key_raw);
+    $private_key = load_from_private($private_key_raw);
     if ($private_key == false) {
-        add_message("error", "Invalid private key received");
+        add_message("error", "Invalid or not authenticated private key received");
         return false;
     }
-    
+
     $public_key = $private_key->getPublicKey();
     $public_key_h = algo_gen_hash($public_key->toString("PKCS8"), SLOPT_PUBLIC_KEY_ADDRESS);
     $public_key_d = algo_gen_hash($public_key_h, SLOPT_PUBLIC_KEY_DIRNAME);
@@ -68,6 +68,8 @@ function delete(string $private_key, string $id)
         // delete for receiver
         $file = INBOX_PATH . $public_key_d . "/" . $id_h;
         unlink($file);
+
+        create_transaction("message.delete", $public_key_h, "", $id, "");
     } else { // found message on his sent folder, so he sent it
         // delete for sender
         $file = SENT_PATH . $public_key_d . "/" . $id_h;
@@ -80,6 +82,8 @@ function delete(string $private_key, string $id)
             $file = INBOX_PATH . $to_public_key_h . "/" . $id_h;
             if (is_file($file) /*check if file wasn't already deleted by receiver*/) unlink($file);
         }
+
+        create_transaction("message.delete", $public_key_h, $storeTo, $id, "");
     }
 
     finish:

@@ -26,8 +26,27 @@ function load(string $rawKey)
 {
     try {
         return DH::load($rawKey);
-    } catch (\Throwable) {
+    } catch (\Throwable $ex) {
         return false;
+    }
+}
+
+function load_from_private(string $raw_private_key)
+{
+    $private_key = load($raw_private_key);
+    if ($private_key == false) {
+        return false;
+    }
+
+    $public_key = $private_key->getPublicKey();
+    $public_key_hash = algo_gen_hash($public_key->toString("PKCS8"), SLOPT_PUBLIC_KEY_ADDRESS);
+    $public_key_dirname = algo_gen_hash($public_key_hash, SLOPT_PUBLIC_KEY_DIRNAME);
+
+    if (!is_file(IDENTITY_PATH . $public_key_dirname)) {
+        // is not authenticated
+        return false;
+    } else {
+        return $private_key;
     }
 }
 
@@ -41,7 +60,7 @@ function load_from_public_hash(string $public_key_hash)
     }
 
     $json = json_decode(decrypt_message(file_get_contents(IDENTITY_PATH . $public_key_dirname), $public_key_secret), false);
-    if(($json->private->public_key ?? null) == null) {
+    if (($json->private->public_key ?? null) == null) {
         return false;
     }
 

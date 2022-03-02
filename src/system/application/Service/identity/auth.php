@@ -20,22 +20,21 @@
     https://github.com/starless-sky-protocol/starless-sky-network
 */
 
-function generate_random_string($length = 10)
-{
-    return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyz', ceil($length / strlen($x)))), 1, $length);
-}
+namespace svc\identity;
 
-function gen_skyid()
+function auth(string $raw_private_key): string|bool
 {
-    return uniqid() . generate_random_string(16);
-}
+    $private_key = load_from_private($raw_private_key);
 
-function transaction_id($zero = false)
-{
-    if ($zero == false) {
-        $m = (int)(round(hrtime(true) * 1000));
-    } else {
-        $m = "0";
+    if ($private_key == false) {
+        add_message("error", "Invalid or not authenticated private key received");
+        return false;
     }
-    return str_pad($m . rand(100000, 999999), 26, "0", STR_PAD_LEFT);
+
+    $sender_public_key_obj = $private_key->getPublicKey();
+    $sender_public_key_raw = $sender_public_key_obj->toString("PKCS8");
+    $sender_public_key_hash = algo_gen_hash($sender_public_key_raw, SLOPT_PUBLIC_KEY_ADDRESS);
+
+    add_message("info", "Private key is authenticated in this network");
+    return $sender_public_key_hash;
 }

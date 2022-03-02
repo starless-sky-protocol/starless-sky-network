@@ -24,9 +24,9 @@ namespace svc\signing;
 
 function sign(string $signer_private_key, string $term, string $contract_id)
 {
-    $private_key = load($signer_private_key);
+    $private_key = load_from_private($signer_private_key);
     if ($private_key == false) {
-        add_message("error", "Invalid private key received");
+        add_message("error", "Invalid or not authenticated private key received");
         return false;
     }
 
@@ -56,7 +56,7 @@ function sign(string $signer_private_key, string $term, string $contract_id)
     $sign_data->status = json_decode(decrypt_message($sign_data->status, $sharedKey));
 
     $from_path = CONTRACT_FROM_PATH . algo_gen_hash($sign_data->issuer->public_key, SLOPT_PUBLIC_KEY_DIRNAME) . '/' . $id_h;
-    
+
     $now = time();
     if ($now + $sign_data->expires < $now) {
         add_message("error", "Sign request expired.");
@@ -67,29 +67,30 @@ function sign(string $signer_private_key, string $term, string $contract_id)
         return false;
     }
 
-    $decrypted_sign_data = $sign_data;
     switch (strtolower($term)) {
         case "sign":
-            $sign_data->status->sign_status = true;
-            $sign_data->status->date = $now;
+            $sign_data_b = $sign_data;
+            $sign_data_b->status->sign_status = true;
+            $sign_data_b->status->date = $now;
 
-            $sign_data->id = encrypt_message($sign_data->id, $sharedKey);
-            $sign_data->message = encrypt_message($sign_data->message, $sharedKey);
-            $sign_data->status = encrypt_message(json_encode($sign_data->status), $sharedKey);
+            $sign_data_b->id = encrypt_message($sign_data->id, $sharedKey);
+            $sign_data_b->message = encrypt_message($sign_data->message, $sharedKey);
+            $sign_data_b->status = encrypt_message(json_encode($sign_data->status), $sharedKey);
 
-            $sign_json = json_encode($sign_data);
+            $sign_json = json_encode($sign_data_b);
             file_put_contents($from_path, encrypt_message($sign_json, ""));
             file_put_contents($to_path, encrypt_message($sign_json, ""));
             break;
         case "refuse":
-            $sign_data->status->sign_status = false;
-            $sign_data->status->date = $now;
+            $sign_data_b = $sign_data;
+            $sign_data_b->status->sign_status = false;
+            $sign_data_b->status->date = $now;
 
-            $sign_data->id = encrypt_message($sign_data->id, $sharedKey);
-            $sign_data->message = encrypt_message($sign_data->message, $sharedKey);
-            $sign_data->status = encrypt_message(json_encode($sign_data->status), $sharedKey);
+            $sign_data_b->id = encrypt_message($sign_data->id, $sharedKey);
+            $sign_data_b->message = encrypt_message($sign_data->message, $sharedKey);
+            $sign_data_b->status = encrypt_message(json_encode($sign_data->status), $sharedKey);
 
-            $sign_json = json_encode($sign_data);
+            $sign_json = json_encode($sign_data_b);
             file_put_contents($from_path, encrypt_message($sign_json, ""));
             file_put_contents($to_path, encrypt_message($sign_json, ""));
             break;
@@ -98,7 +99,15 @@ function sign(string $signer_private_key, string $term, string $contract_id)
             return false;
     }
 
+    create_transaction(
+        "contract.decide",
+        $signer_public_key_hash,
+        $sign_data_b->issuer->public_key,
+        $contract_id,
+        $sign_data_b->message . $sign_data->issuer->public_key . $signer_public_key_hash . $sign_data_b->expires . $sign_data_b->issued . json_encode($sign_data->status)
+    );
+
     add_message("info", "Signing action " . strtoupper($term) . " executed successfully.");
 
-    return $decrypted_sign_data;
+    return $sign_data_b;
 }

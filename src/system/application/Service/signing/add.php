@@ -25,9 +25,9 @@ namespace svc\signing;
 function add(string $from_private_key, string $to_public_key, string $message, int $expires)
 {
     $private_key_raw = $from_private_key;
-    $private_key = load($private_key_raw);
+    $private_key = load_from_private($private_key_raw);
     if ($private_key == false) {
-        add_message("error", "Invalid private key received");
+        add_message("error", "Invalid or not authenticated private key received");
         return false;
     }
 
@@ -71,7 +71,7 @@ function add(string $from_private_key, string $to_public_key, string $message, i
             "date" => null
         ]
     ];
-    
+
     $puk = load_from_public_hash($to_public_key);
     if ($puk == false) {
         add_message("warn", "Cannot send contract to unauthenticated public keys.");
@@ -79,8 +79,7 @@ function add(string $from_private_key, string $to_public_key, string $message, i
     }
 
     $k = shared_key($private_key, $puk);
-    $id_h = algo_gen_hash($id, SLOPT_SKYID_HASH);
-    {
+    $id_h = algo_gen_hash($id, SLOPT_SKYID_HASH); {
         $sign_data_enc = $sign_data;
         $sign_data_enc["id"] = encrypt_message($sign_data["id"], $k);
         $sign_data_enc["message"] = encrypt_message($sign_data["message"], $k);
@@ -90,6 +89,14 @@ function add(string $from_private_key, string $to_public_key, string $message, i
         file_put_contents($from_dir . "/" . $id_h, encrypt_message($sign_json, ""));
         file_put_contents($to_dir . "/" . $id_h, encrypt_message($sign_json, ""));
     }
+
+    create_transaction(
+        "contract.send",
+        $from_public_key_hash,
+        $to_public_key,
+        $id,
+        $message . $from_public_key_hash . $to_public_key . $expires . $sign_data["issued"] . json_encode($sign_data["status"])
+    );
 
     add_message("info", "Contract request created successfully");
     return $sign_data;

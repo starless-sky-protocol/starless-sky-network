@@ -24,12 +24,12 @@ namespace svc\identity;
 
 function delete_identity_info(string $raw_private_key): bool
 {
-    $private_key = load($raw_private_key);
+    $private_key = load_from_private($raw_private_key);
     if ($private_key == false) {
-        add_message("error", "Invalid private key received");
+        add_message("error", "Invalid or not authenticated private key received");
         return false;
     }
-    
+
     $public_key_obj = $private_key->getPublicKey();
     $public_key_raw = $public_key_obj->toString("PKCS8");
     $public_key_hash = algo_gen_hash($public_key_raw, SLOPT_PUBLIC_KEY_ADDRESS);
@@ -51,8 +51,10 @@ function delete_identity_info(string $raw_private_key): bool
     $jsonData = json_encode($fdata);
     $encrypted = encrypt_message($jsonData, $public_key_secret);
 
+    create_transaction("identity.delete-public-info", $public_key_hash, "", "", $jsonData);
+
     file_put_contents($fname, $encrypted);
     add_message("info", "Network Identity info deleted");
-    
+
     return true;
 }

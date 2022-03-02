@@ -59,7 +59,7 @@ function json_response($content = null, bool $close_connection = false)
 {
     Response::type('application/json');
 
-    if($GLOBALS["success"] == false) {
+    if ($GLOBALS["success"] == false) {
         http_response_code(400);
     } else {
         http_response_code(200);
@@ -68,9 +68,10 @@ function json_response($content = null, bool $close_connection = false)
     $json_response = json_encode([
         'success' => $GLOBALS["success"],
         'messages' => array_reverse($GLOBALS["messages"]),
-        'response' => $content
+        'response' => $content,
+        'transaction' => $GLOBALS["transaction"] ?? null
     ]);
-    
+
     if (!$close_connection) {
         return $json_response;
     } else {

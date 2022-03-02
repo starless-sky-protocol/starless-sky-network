@@ -28,4 +28,22 @@ class server_controller
     {
         return json_response(\svc\server\ping());
     }
+
+    function get_closed_blocks()
+    {
+        add_message("info", "Fetching closed blocks on this network");
+        $b = array_map("basename", glob(TRANSACTIONS_PATH . '*.{closed}', GLOB_BRACE));
+        return json_response($b);
+    }
+
+    function read_block($block)
+    {
+        if(is_file(TRANSACTIONS_PATH . $block)) {
+            add_message("info", "Block fetched");
+            return json_response(json_decode(file_get_contents(TRANSACTIONS_PATH . $block)));
+        } else {
+            add_message("error", "Block not found");
+            return json_response();
+        }
+    }
 }

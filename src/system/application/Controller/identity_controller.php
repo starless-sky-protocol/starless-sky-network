@@ -52,6 +52,19 @@ class identity_controller
         return json_response(["public_info" => $public_info, "public_address" => $res]);
     }
 
+    public function auth_handler()
+    {
+        $private_key = @$GLOBALS["request"]->private_key;
+
+        if ($private_key == null) {
+            add_message("error", "Private key not provided");
+            return json_response();
+        }
+
+        $res = \svc\identity\auth($private_key);
+        return json_response(["public_address" => $res]);
+    }
+
     public function delete_identity_info_handler() {
         $private_key = @$GLOBALS["request"]->private_key;
 

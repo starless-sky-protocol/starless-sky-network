@@ -9,6 +9,7 @@ return array(
         'multicast_max_receivers' => 50,
         'message_max_size' => '2M',
         'sign_message_max_size' => '256K',
-        'sign_max_expiration' => 3600
+        'sign_max_expiration' => 3600,
+        'block_size' => 50
     ]
 );
