@@ -24,8 +24,9 @@ namespace Controller;
 
 class messages_controller
 {
-    public function edit($id)
+    public static function edit()
     {
+        $id = @$GLOBALS["request"]->id;
         $private_key = @$GLOBALS["request"]->private_key;
         $message = @$GLOBALS["request"]->message;
 
@@ -39,7 +40,7 @@ class messages_controller
         return json_response($res);
     }
 
-    public function browse()
+    public static function browse()
     {
         $private_key = @$GLOBALS["request"]->private_key;
         $folder = @$GLOBALS["request"]->folder;
@@ -71,7 +72,7 @@ class messages_controller
         );
     }
 
-    public function add()
+    public static function add()
     {
         $private_key = @$GLOBALS["request"]->private_key;
         $public_keys = @$GLOBALS["request"]->public_keys;
@@ -91,8 +92,9 @@ class messages_controller
         return json_response($res);
     }
 
-    public function read($id)
+    public static function read()
     {
+        $id = @$GLOBALS["request"]->id;
         $private_key = @$GLOBALS["request"]->private_key;
 
         if ($private_key == null) {
@@ -105,8 +107,9 @@ class messages_controller
         return json_response($res);
     }
 
-    public function delete($id)
+    public static function delete()
     {
+        $id = @$GLOBALS["request"]->id;
         $private_key = @$GLOBALS["request"]->private_key;
 
         if ($private_key == null) {

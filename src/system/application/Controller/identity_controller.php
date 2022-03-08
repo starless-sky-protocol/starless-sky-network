@@ -24,12 +24,12 @@ namespace Controller;
 
 class identity_controller
 {
-    public function generate_random_keypair_handler()
+    public static function generate_random_keypair_handler()
     {
         return json_response(\svc\identity\generate_random_keypair());
     }
 
-    public function set_identity_info_handler()
+    public static function set_identity_info_handler()
     {
         $private_key = @$GLOBALS["request"]->private_key;
         $public_info = @$GLOBALS["request"]->public;
@@ -52,7 +52,7 @@ class identity_controller
         return json_response(["public_info" => $public_info, "public_address" => $res]);
     }
 
-    public function auth_handler()
+    public static function auth_handler()
     {
         $private_key = @$GLOBALS["request"]->private_key;
 
@@ -65,7 +65,7 @@ class identity_controller
         return json_response(["public_address" => $res]);
     }
 
-    public function delete_identity_info_handler() {
+    public static function delete_identity_info_handler() {
         $private_key = @$GLOBALS["request"]->private_key;
 
         if ($private_key == null) {
@@ -78,7 +78,7 @@ class identity_controller
         return json_response();
     }
 
-    public function get_identity_info_handler()
+    public static function get_identity_info_handler()
     {
         $public_keys = @$GLOBALS["request"]->public_keys;
 

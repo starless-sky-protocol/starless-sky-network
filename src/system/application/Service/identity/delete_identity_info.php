@@ -51,7 +51,7 @@ function delete_identity_info(string $raw_private_key): bool
     $jsonData = json_encode($fdata);
     $encrypted = encrypt_message($jsonData, $public_key_secret);
 
-    create_transaction("identity.delete-public-info", $public_key_hash, "", "", $jsonData);
+    create_transaction("identity.delete-public-info", $public_key_hash, "", "", "");
 
     file_put_contents($fname, $encrypted);
     add_message("info", "Network Identity info deleted");

@@ -24,20 +24,21 @@ namespace Controller;
 
 class server_controller
 {
-    function ping()
+    public static function ping()
     {
         return json_response(\svc\server\ping());
     }
 
-    function get_closed_blocks()
+    public static function get_closed_blocks()
     {
         add_message("info", "Fetching closed blocks on this network");
         $b = array_map("basename", glob(TRANSACTIONS_PATH . '*.{closed}', GLOB_BRACE));
         return json_response($b);
     }
 
-    function read_block($block)
+    public static function read_block()
     {
+        $block = @$GLOBALS["request"]->block;
         if(is_file(TRANSACTIONS_PATH . $block)) {
             add_message("info", "Block fetched");
             return json_response(json_decode(file_get_contents(TRANSACTIONS_PATH . $block)));

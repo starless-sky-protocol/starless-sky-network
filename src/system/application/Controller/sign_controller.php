@@ -24,8 +24,9 @@ namespace Controller;
 
 class sign_controller
 {
-    function view($id)
+    public static function view()
     {
+        $id = @$GLOBALS["request"]->id;
         $private_key = @$GLOBALS["request"]->private_key;
 
         if ($private_key == null) {
@@ -38,7 +39,7 @@ class sign_controller
         return json_response($res);
     }
 
-    function add()
+    public static function add()
     {
         $private_key = @$GLOBALS["request"]->private_key;
         $public_key = @$GLOBALS["request"]->public_key;
@@ -63,7 +64,7 @@ class sign_controller
         return json_response($res);
     }
 
-    function browse()
+    public static function browse()
     {
         $private_key = @$GLOBALS["request"]->private_key;
         $folder = @$GLOBALS["request"]->folder;
@@ -95,8 +96,9 @@ class sign_controller
         );
     }
 
-    function sign($id)
+    public static function opt()
     {
+        $id = @$GLOBALS["request"]->id;
         $private_key = @$GLOBALS["request"]->private_key;
         $term = @$GLOBALS["request"]->term;
 

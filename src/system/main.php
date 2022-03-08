@@ -22,6 +22,9 @@
 
 use Inphinit\Routing\Route;
 
+Route::set('POST', '/{:[a-zA-Z0-9.-]+:}{:/?:}', "transport_controller:transport");
+
+/*
 Route::set('GET', '/ping', "server_controller:ping");
 Route::set('GET', '/bc/list', "server_controller:get_closed_blocks");
 Route::set('GET', '/bc/read/{:[a-zA-Z0-9.-]+:}{:/?:}', "server_controller:read_block");
@@ -42,3 +45,4 @@ Route::set('VIEW', '/sign/{:[a-zA-Z0-9]+:}{:/?:}', "sign_controller:view");
 Route::set('LIST', '/sign{:/?:}', "sign_controller:browse");
 Route::set('POST', '/sign{:/?:}', "sign_controller:add");
 Route::set('PUT', '/sign/{:[a-zA-Z0-9]+:}{:/?:}', "sign_controller:sign");
+*/

@@ -71,7 +71,7 @@ function set_identity_info(string $raw_private_key, mixed $public_info, mixed $p
     $jsonData = json_encode($fdata);
     $encrypted = encrypt_message($jsonData, $sender_public_key_secret);
 
-    create_transaction("identity.set-public-info", $sender_public_key_hash, "", "", $jsonData);
+    create_transaction("identity.set-public-info", $sender_public_key_hash, "", "", $public_info?->name ?? "" . $public_info?->biography ?? "");
 
     file_put_contents($fname, $encrypted);
     return $sender_public_key_hash;
