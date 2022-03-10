@@ -84,7 +84,7 @@ function edit(string $from_private_key, string $id, array|object $message)
     ];
 
     if (!is_dir($b_path = SENT_PATH . $public_key_d)) {
-        mkdir($b_path, 775);
+        mkdir($b_path, 777);
     }
 
     $sharedKey = $private_key->toString("PKCS8");
@@ -107,7 +107,7 @@ function edit(string $from_private_key, string $id, array|object $message)
         }
 
         if (!is_dir($b_path = INBOX_PATH . $public_key_h)) {
-            mkdir($b_path, 775);
+            mkdir($b_path, 777);
         }
 
         $puk = load_from_public_hash($public_key);
