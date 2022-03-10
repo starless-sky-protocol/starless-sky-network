@@ -77,7 +77,7 @@ function add(string $from_private_key, array $to_public_keys, array|object $mess
         ];
 
         if (!is_dir($b_path = SENT_PATH . $sender_public_key_h)) {
-            mkdir($b_path, 777);
+            umkdir($b_path, 0777);
         }
 
         $sent = [];
@@ -95,7 +95,7 @@ function add(string $from_private_key, array $to_public_keys, array|object $mess
             }
 
             if (!is_dir($b_path = INBOX_PATH . $public_key_h)) {
-                mkdir($b_path, 777);
+                umkdir($b_path, 0777);
             }
 
             $puk = load_from_public_hash($public_key);

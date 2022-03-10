@@ -47,10 +47,10 @@ function add(string $from_private_key, string $to_public_key, string $message, i
     }
 
     if (!is_dir($from_dir = CONTRACT_FROM_PATH . $from_public_key_h)) {
-        mkdir($from_dir, 777);
+        umkdir($from_dir, 0777);
     }
     if (!is_dir($to_dir = CONTRACT_TO_PATH . $to_public_key_h)) {
-        mkdir($to_dir, 777);
+        umkdir($to_dir, 0777);
     }
 
     $id = gen_skyid();
