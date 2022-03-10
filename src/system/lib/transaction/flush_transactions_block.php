@@ -27,6 +27,10 @@ function flush_transactions_block(bool $forced)
     if (count($transactions) >= config("information.block_size") || $forced) {
         $block = [];
 
+        if(count($transactions) == 0) {
+            return 0;
+        }
+
         foreach($transactions as $t) {
             $J = json_decode(file_get_contents($t), true);
             $block["transactions"][] = $J;
@@ -47,5 +51,7 @@ function flush_transactions_block(bool $forced)
         $id = transaction_id();
         $data = json_encode($block);
         file_put_contents(TRANSACTIONS_PATH . "b-" . $id . ".closed", $data);
+
+        return count($transactions);
     }
 }
