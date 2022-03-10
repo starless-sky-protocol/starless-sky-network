@@ -64,6 +64,8 @@ class transport_controller
                 return server_controller::read_block();
             case "server.bc.list":
                 return server_controller::get_closed_blocks();
+            case "server.bc.flush":
+                return server_controller::flush_blocks();
 
             default:
                 add_message("error", "Unknown command received");

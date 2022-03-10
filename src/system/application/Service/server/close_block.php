@@ -20,22 +20,11 @@
     https://github.com/starless-sky-protocol/starless-sky-network
 */
 
-function create_transaction(string $command, ?string $from_public_address = null, array|string $to_public_keys = null, ?string $sky_id = null, ?string $content = null)
-{
-    $id = transaction_id();
-    $content = [
-        "command" => $command,
-        "from" => $from_public_address,
-        "to" => $to_public_keys,
-        "sky_id" => $sky_id,
-        "content" => blake3($content ?? ""),
-        "time" => time(),
-        "id" => $id
-    ];
-    $j = json_encode($content);
+namespace svc\server;
 
-    $GLOBALS["transaction"] = $content;
-    file_put_contents(TRANSACTIONS_PATH . "t-" . $id . ".open", $j);
-    flush_transactions_block(false);
-    return $id;
+function close_block()
+{
+    flush_transactions_block(true);
+    add_message("info", "Current transactions block flushed");
+    return json_response();
 }

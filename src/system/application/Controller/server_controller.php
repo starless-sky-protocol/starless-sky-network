@@ -36,10 +36,22 @@ class server_controller
         return json_response($b);
     }
 
+    public static function flush_blocks()
+    {
+        $blockchain_close_key = @$GLOBALS["request"]->blockchain_close_key;
+        if (!secure_strcmp($blockchain_close_key, config("blockchain_close_key", ""))) {
+            add_message("error", "Invalid blockchain_close_key token received.");
+        } else {
+            \svc\server\close_block();
+        }
+
+        return json_response();
+    }
+
     public static function read_block()
     {
         $block = @$GLOBALS["request"]->block;
-        if(is_file(TRANSACTIONS_PATH . $block)) {
+        if (is_file(TRANSACTIONS_PATH . $block)) {
             add_message("info", "Block fetched");
             return json_response(json_decode(file_get_contents(TRANSACTIONS_PATH . $block)));
         } else {

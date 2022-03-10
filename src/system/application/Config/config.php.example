@@ -3,6 +3,7 @@ return array(
     'development' => true,
     'dns' => 'starlessskynetworkserver.test',
     'crypto_key' => '',
+    'blockchain_close_key' => '',
     'information' => [
         'allow_message_edit' => true,
         'allow_message_deletion' => true,
