@@ -80,13 +80,14 @@ function browse(string $private_key, string $folder, array|object $pagination_da
         $sharedKey = strcmp($contract_decrypted->issuer->public_key, $public_key_hash) == 0
             ? shared_key($private_key, load_from_public_hash($contract_decrypted->signer->public_key))
             : shared_key($private_key, load_from_public_hash($contract_decrypted->issuer->public_key));
-
+        
         $data[] = [
             "id" => decrypt_message($contract_decrypted->id, $sharedKey),
             "issued" => $contract_decrypted->issued,
             "from" => $contract_decrypted->issuer->public_key,
             "to" => $contract_decrypted->signer->public_key,
             "message" => decrypt_message($contract_decrypted->message, $sharedKey),
+            "title" => decrypt_message($contract_decrypted->title, $sharedKey),
             "sign_status" => json_decode(decrypt_message($contract_decrypted->status, $sharedKey))->sign_status
         ];
     }

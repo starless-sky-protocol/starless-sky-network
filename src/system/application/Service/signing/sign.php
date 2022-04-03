@@ -75,6 +75,7 @@ function sign(string $signer_private_key, string $term, string $contract_id)
 
             $sign_data_b->id = encrypt_message($sign_data->id, $sharedKey);
             $sign_data_b->message = encrypt_message($sign_data->message, $sharedKey);
+            $sign_data_b->title = encrypt_message($sign_data->title, $sharedKey);
             $sign_data_b->status = encrypt_message(json_encode($sign_data->status), $sharedKey);
 
             $sign_json = json_encode($sign_data_b);
@@ -88,6 +89,7 @@ function sign(string $signer_private_key, string $term, string $contract_id)
 
             $sign_data_b->id = encrypt_message($sign_data->id, $sharedKey);
             $sign_data_b->message = encrypt_message($sign_data->message, $sharedKey);
+            $sign_data_b->title = encrypt_message($sign_data->title, $sharedKey);
             $sign_data_b->status = encrypt_message(json_encode($sign_data->status), $sharedKey);
 
             $sign_json = json_encode($sign_data_b);
@@ -104,7 +106,7 @@ function sign(string $signer_private_key, string $term, string $contract_id)
         $signer_public_key_hash,
         $sign_data_b->issuer->public_key,
         $contract_id,
-        $sign_data_b->message . $sign_data->issuer->public_key . $signer_public_key_hash . $sign_data_b->expires . $sign_data_b->issued . json_encode($sign_data->status)
+        $sign_data_b->message . $sign_data_b->title . $sign_data->issuer->public_key . $signer_public_key_hash . $sign_data_b->expires . $sign_data_b->issued . json_encode($sign_data->status)
     );
 
     add_message("info", "Signing action " . strtoupper($term) . " executed successfully.");

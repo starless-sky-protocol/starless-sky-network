@@ -59,6 +59,7 @@ function view(string $private_key, string $id)
     $sharedKey = shared_key($private_key, $puk);
     $sign_data->id = decrypt_message($sign_data->id, $sharedKey);
     $sign_data->message = decrypt_message($sign_data->message, $sharedKey);
+    $sign_data->title = decrypt_message($sign_data->title, $sharedKey);
     $sign_data->status = json_decode(decrypt_message($sign_data->status, $sharedKey));
 
     $now = time();

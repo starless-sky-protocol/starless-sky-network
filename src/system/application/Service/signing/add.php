@@ -22,7 +22,7 @@
 
 namespace svc\signing;
 
-function add(string $from_private_key, string $to_public_key, string $message, int $expires)
+function add(string $from_private_key, string $to_public_key, string $message, string $title, int $expires)
 {
     $private_key_raw = $from_private_key;
     $private_key = load_from_private($private_key_raw);
@@ -41,7 +41,7 @@ function add(string $from_private_key, string $to_public_key, string $message, i
         add_message("error", "Invalid receiver public key.");
         return false;
     }
-    if (strlen($message) > parse_hsize($size = config("information.sign_message_max_size"))) {
+    if (strlen($message . $title) > parse_hsize($size = config("information.sign_message_max_size"))) {
         add_message("error", "Sign message is greater than the server limit: " + $size);
         return false;
     }
@@ -60,6 +60,7 @@ function add(string $from_private_key, string $to_public_key, string $message, i
         "issued" => $now,
         "expires" => min($expires, config("information.sign_max_expiration")),
         "message" => $message,
+        "title" => $title,
         "issuer" => [
             "public_key" => $from_public_key_hash
         ],
@@ -83,6 +84,7 @@ function add(string $from_private_key, string $to_public_key, string $message, i
         $sign_data_enc = $sign_data;
         $sign_data_enc["id"] = encrypt_message($sign_data["id"], $k);
         $sign_data_enc["message"] = encrypt_message($sign_data["message"], $k);
+        $sign_data_enc["title"] = encrypt_message($sign_data["title"], $k);
         $sign_data_enc["status"] = encrypt_message(json_encode($sign_data["status"]), $k);
 
         $sign_json = json_encode($sign_data_enc);
@@ -95,7 +97,7 @@ function add(string $from_private_key, string $to_public_key, string $message, i
         $from_public_key_hash,
         $to_public_key,
         $id,
-        $message . $from_public_key_hash . $to_public_key . $expires . $sign_data["issued"] . json_encode($sign_data["status"])
+        $message . $title . $from_public_key_hash . $to_public_key . $expires . $sign_data["issued"] . json_encode($sign_data["status"])
     );
 
     add_message("info", "Contract request created successfully");

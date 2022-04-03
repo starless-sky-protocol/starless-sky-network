@@ -37,5 +37,5 @@ function transaction_id($zero = false)
     } else {
         $m = "0";
     }
-    return str_pad($m . rand(100000, 999999), 26, "0", STR_PAD_LEFT);
+    return str_pad($m . rand(100000, 999999), 28, "0", STR_PAD_LEFT);
 }

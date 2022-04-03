@@ -44,6 +44,7 @@ class sign_controller
         $private_key = @$GLOBALS["request"]->private_key;
         $public_key = @$GLOBALS["request"]->public_key;
         $message = @$GLOBALS["request"]->message;
+        $title = @$GLOBALS["request"]->title;
         $expires = @$GLOBALS["request"]->expires;
 
         if ($private_key == null) {
@@ -58,8 +59,16 @@ class sign_controller
             add_message("error", "Contract expiration time not provided");
             return json_response();
         }
+        if ($title == null) {
+            add_message("error", "Title not provided");
+            return json_response();
+        }
+        if ($message == null) {
+            add_message("error", "Message not provided");
+            return json_response();
+        }
 
-        $res = \svc\signing\add($private_key, $public_key, $message, $expires);
+        $res = \svc\signing\add($private_key, $public_key, $message, $title, $expires);
 
         return json_response($res);
     }

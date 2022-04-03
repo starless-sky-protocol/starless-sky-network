@@ -1,5 +1,12 @@
 # Changelog
 
+## Version **0.18** Build **985** Alpha
+
+Development branch: `ALPHA`
+
+- Contracts now can have a field called "Title".
+- Transactions ID is now 28 characters long.
+
 ## Version **0.17** Build **955** Alpha
 
 Development branch: `ALPHA`
