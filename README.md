@@ -1,4 +1,4 @@
-![aa](https://i.imgur.com/69IIaFR.png)
+![aa](https://docs.starless-sky.org/img/69IIaFR.png)
 
 <p align=center>Descentralized network protocol providing smart identity over an secure layer.</p>
 
@@ -34,22 +34,22 @@ With a private key it is possible to calculate your public key, but with a publi
 
 There is no perfect system, but there are procedures that make a network secure enough to don't have problems in the future. This system uses the latest encryption technologies and tends to be secure.
 
-Read the [security considerations section](https://starless-sky-protocol.github.io/docs/#/considerations) to understand the best security practices for a network that can store identities.
+Read the [security considerations section](https://docs.starless-sky.org/#/considerations) to understand the best security practices for a network that can store identities.
 
 ## Documentation
 
-You can read documentation about Starless Sky Network, API and resources for developers at https://starless-sky-protocol.github.io/docs/.
+You can read documentation about Starless Sky Network, API and resources for developers at https://docs.starless-sky.org/.
 
 ## Donate ❤
 
 If you support a more private and decentralized internet, consider keeping this project alive:
 
+    Monero:        859NqG14v9r49w31cdSFm1Hy5ifGGn6QdXhUYNuqbJddWyoULPQjqm8HuZz7b3JcR1hr9Gvq9u4vSHrRutMBYb6f4nQ21Jc
     Bitcoin:       1LeGvA8wXhEBuvrWYt5Yb1jQZ5FsjALYqM
     Litecoin:      LNQ4A7R96vWQ8wzwypJeS3o1wWV2xuAsUv
     Ethereum:      0x8d2ced9d9229149fdbd216284f4bb8d147a50d93
     BNB (BSC):     0x8d2ced9d9229149fdbd216284f4bb8d147a50d93
     USDT (TRX):    TQFprvPVJJTgiiPMZehSnTY5P4RSQCSeNR
-    Monero:        859NqG14v9r49w31cdSFm1Hy5ifGGn6QdXhUYNuqbJddWyoULPQjqm8HuZz7b3JcR1hr9Gvq9u4vSHrRutMBYb6f4nQ21Jc
 
 ## Credits and used third-party technologies
 
